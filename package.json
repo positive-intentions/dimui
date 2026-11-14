@@ -1,0 +1,13 @@
+{
+  "name": "dimui",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Material-inspired component library and custom explorer for @positive-intentions/dim",
+  "scripts": {
+    "start": "npx --yes --package=serve@14.2.4 -- serve . -p 5173"
+  },
+  "dependencies": {
+    "@positive-intentions/dim": "file:../dim"
+  }
+}

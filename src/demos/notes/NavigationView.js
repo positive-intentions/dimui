@@ -1,0 +1,93 @@
+import { define, html, css, useStyle } from "@positive-intentions/dim";
+import { appStyles } from "./styles.js";
+import { SMART_FOLDERS } from "./mockData.js";
+import "./note-list.js";
+import "./note-editor.js";
+
+const NavigationView = (props, { useStyle, html, css }) => {
+  const data = props.props || props;
+  const {
+    notes = [],
+    folders = [],
+    selectedId = null,
+    folderFilter = SMART_FOLDERS.all,
+    folderLabel = "Notes",
+    navStack = ["list"],
+    saveStatus = "",
+    onSelect,
+    onCreate,
+    onBack,
+    onChange,
+    onTogglePin,
+    onMoveFolder,
+    onTrash,
+    onRestore,
+    onDeleteForever,
+    onEmptyTrash,
+  } = data;
+
+  useStyle(css`
+    ${appStyles}
+
+    :host {
+      display: block;
+      height: 100%;
+      min-height: 0;
+    }
+
+    .nav-view-root > .list-pane > *,
+    .nav-view-root > .editor-pane > * {
+      flex: 1;
+      min-height: 0;
+      height: 100%;
+    }
+  `);
+
+  const top = navStack[navStack.length - 1] || "list";
+  const noteOpen = top.startsWith("note:");
+  const openId = noteOpen ? top.slice(5) : selectedId;
+  const selected =
+    notes.find((n) => n.id === openId) ||
+    notes.find((n) => n.id === selectedId) ||
+    null;
+
+  const rootClass = noteOpen ? "nav-view-root note-open" : "nav-view-root";
+
+  return html`
+    <div class="${rootClass}">
+      <div class="list-pane">
+        <dimui-note-list
+          .props="${{
+            notes,
+            selectedId: selected?.id || null,
+            folderFilter,
+            folderLabel,
+            onSelect,
+            onCreate,
+            onEmptyTrash,
+          }}"
+        ></dimui-note-list>
+      </div>
+      <div class="editor-pane">
+        <dimui-note-editor
+          .props="${{
+            note: selected,
+            folders,
+            saveStatus,
+            showBack: noteOpen,
+            onBack,
+            onChange,
+            onTogglePin,
+            onMoveFolder,
+            onTrash,
+            onRestore,
+            onDeleteForever,
+          }}"
+        ></dimui-note-editor>
+      </div>
+    </div>
+  `;
+};
+
+define({ tag: "dimui-notes-nav", component: NavigationView });
+export default NavigationView;
