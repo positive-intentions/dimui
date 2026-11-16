@@ -1,0 +1,72 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - staging
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # file:../dim expects a sibling of this repo.
+      - name: Checkout dim sibling
+        uses: actions/checkout@v4
+        with:
+          repository: positive-intentions/dim
+          ref: staging
+          path: _dim
+
+      - name: Link dim for file:../dim
+        run: ln -sfn "$GITHUB_WORKSPACE/_dim" "$(dirname "$GITHUB_WORKSPACE")/dim"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: _dim/package-lock.json
+
+      - name: Install and build dim
+        working-directory: _dim
+        run: |
+          npm ci
+          npm run build:lib
+
+      - name: Prepare Pages artifact
+        run: |
+          mkdir -p _site/node_modules/@positive-intentions/dim
+          cp index.html preview.html app.js preview.js _site/
+          cp -r src _site/src
+          cp -r _dim/dist _site/node_modules/@positive-intentions/dim/dist
+          cp _site/index.html _site/404.html
+          touch _site/.nojekyll
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
