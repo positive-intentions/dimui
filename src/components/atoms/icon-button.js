@@ -76,7 +76,7 @@ export const IconButton = define({
         ?disabled="${disabled}"
         @click="${onClick}"
       >
-        <dimui-icon .props="${{ name }}"></dimui-icon>
+        <dimui-icon .props="${{ name }}" />
       </button>
     `;
   },

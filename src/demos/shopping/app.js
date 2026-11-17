@@ -432,7 +432,7 @@ const ShoppingAppDemo = (
             transitionId="${viewId}"
             transitionDuration="450"
             .props="${navProps}"
-          ></dimui-shopping-nav>
+          />
         </div>
 
         <nav class="bottom-nav">

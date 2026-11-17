@@ -21,5 +21,5 @@ export const Default = {
         onLock: () => {},
         onUnlockFailed: () => {},
       }}"
-    ></dimui-notes-shell>`,
+    />`,
 };

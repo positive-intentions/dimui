@@ -291,7 +291,7 @@ const MessagingAppDemo = (
           class="sidebar-logo"
           src="${MOCK_USER.avatar}"
           alt="Enkrypted Chat"
-        />
+      />
         ${TABS.map((tab) => renderTabButton(tab, "sidebar-tab"))}
       </nav>
 
@@ -304,7 +304,7 @@ const MessagingAppDemo = (
               class="avatar avatar-sm"
               src="${MOCK_USER.avatar}"
               alt="${MOCK_USER.name}"
-            />
+          />
           </div>
         </header>
 
@@ -313,7 +313,7 @@ const MessagingAppDemo = (
             transitionId="${viewId}"
             transitionDuration="450"
             .props="${navProps}"
-          ></dimui-messaging-nav>
+          />
         </div>
 
         <nav class="bottom-nav">
@@ -330,7 +330,7 @@ const MessagingAppDemo = (
           onClose: () => setContactsOpen(false),
           onSelect: handleContactSelect,
         }}"
-      ></dimui-contacts-drawer>
+      />
     </div>
   `;
 };

@@ -205,7 +205,7 @@ const ConversationListView = (props, { useState, useStyle, html, css }) => {
         src="${conv.avatar}"
         alt="${conv.name}"
         data-vt-shared="${keys.avatar}"
-      />
+    />
     `;
   };
 
@@ -219,7 +219,7 @@ const ConversationListView = (props, { useState, useStyle, html, css }) => {
           placeholder="Search conversations..."
           .value="${search}"
           @input="${(e) => setSearch(e.target.value)}"
-        />
+      />
         <div class="filters">
           ${["all", "groups", "direct"].map(
             (f) => html`

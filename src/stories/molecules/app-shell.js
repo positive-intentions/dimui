@@ -23,5 +23,5 @@ export const Default = {
         onTabChange: () => {},
         content: html`<div style="padding:1.5rem;color:#94a3b8">Content area</div>`,
       }}"
-    ></dimui-app-shell>`,
+    />`,
 };

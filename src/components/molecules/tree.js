@@ -158,7 +158,7 @@ export const Tree = define({
             <span class="chevron">
               <dimui-icon
                 .props="${{ name: chevron }}"
-              ></dimui-icon>
+              />
             </span>
             <span>${node.name}</span>
           </button>

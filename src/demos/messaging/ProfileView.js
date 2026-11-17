@@ -116,7 +116,7 @@ const ProfileView = (props, { useStyle, html, css }) => {
           src="${user.avatar}"
           alt="${user.name}"
           style="margin: 0 auto;"
-        />
+      />
         <h2 class="profile-name">${user.name}</h2>
         <p class="profile-status">${user.status || "Available"}</p>
       </div>

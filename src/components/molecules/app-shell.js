@@ -166,7 +166,7 @@ export const AppShell = define({
               >
                 ${tab.icon}
                 ${tab.id === 1 && cartBadge
-                  ? tpl`<span class="tab-badge"><dimui-badge .props="${{ label: String(cartBadge) }}"></dimui-badge></span>`
+                  ? tpl`<span class="tab-badge"><dimui-badge .props="${{ label: String(cartBadge) }}" /></span>`
                   : null}
               </button>
             `,

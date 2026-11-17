@@ -23,10 +23,10 @@ const TextAreaDemo = define({
                 rows: 8,
                 onInput: setValue,
               }}"
-            ></dimui-text-area>
+            />
           `,
         }}"
-      ></dimui-story-pad>
+            />
     `;
   },
 });
@@ -36,7 +36,7 @@ export default {
 };
 
 export const Default = {
-  render: () => html`<dimui-story-textarea-demo></dimui-story-textarea-demo>`,
+  render: () => html`<dimui-story-textarea-demo />`,
 };
 
 void TextAreaDemo;

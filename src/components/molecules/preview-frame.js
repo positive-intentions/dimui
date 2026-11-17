@@ -140,7 +140,7 @@ export const PreviewFrame = define({
               size: "sm",
               onClick: () => onZoom(Math.max(50, zoom - 10)),
             }}"
-          ></dimui-icon-button>
+          />
           <span class="zoom-label">${zoom}%</span>
           <dimui-icon-button
             .props="${{
@@ -149,7 +149,7 @@ export const PreviewFrame = define({
               size: "sm",
               onClick: () => onZoom(Math.min(200, zoom + 10)),
             }}"
-          ></dimui-icon-button>
+          />
           <dimui-icon-button
             .props="${{
               name: "phone",
@@ -158,7 +158,7 @@ export const PreviewFrame = define({
               active: viewport === "phone",
               onClick: () => onViewport(viewport === "phone" ? "reset" : "phone"),
             }}"
-          ></dimui-icon-button>
+          />
           <dimui-icon-button
             .props="${{
               name: "tablet",
@@ -168,7 +168,7 @@ export const PreviewFrame = define({
               onClick: () =>
                 onViewport(viewport === "tablet" ? "reset" : "tablet"),
             }}"
-          ></dimui-icon-button>
+          />
           <dimui-icon-button
             .props="${{
               name: "desktop",
@@ -178,7 +178,7 @@ export const PreviewFrame = define({
               onClick: () =>
                 onViewport(viewport === "desktop" ? "reset" : "desktop"),
             }}"
-          ></dimui-icon-button>
+          />
           <dimui-icon-button
             .props="${{
               name: "grid",
@@ -187,7 +187,7 @@ export const PreviewFrame = define({
               active: showGrid,
               onClick: onToggleGrid,
             }}"
-          ></dimui-icon-button>
+          />
           <dimui-icon-button
             .props="${{
               name: "outline",
@@ -196,7 +196,7 @@ export const PreviewFrame = define({
               active: showOutline,
               onClick: onToggleOutline,
             }}"
-          ></dimui-icon-button>
+          />
           <dimui-icon-button
             .props="${{
               name: "reload",
@@ -204,7 +204,7 @@ export const PreviewFrame = define({
               size: "sm",
               onClick: onReload,
             }}"
-          ></dimui-icon-button>
+          />
           <dimui-icon-button
             .props="${{
               name: "external",
@@ -212,7 +212,7 @@ export const PreviewFrame = define({
               size: "sm",
               onClick: onOpenExternal,
             }}"
-          ></dimui-icon-button>
+          />
           <dimui-icon-button
             .props="${{
               name: "fullscreen",
@@ -220,7 +220,7 @@ export const PreviewFrame = define({
               size: "sm",
               onClick: onFullscreen,
             }}"
-          ></dimui-icon-button>
+          />
         </div>
       </div>
       <div class="${showGrid ? "stage" : "stage no-grid"}">

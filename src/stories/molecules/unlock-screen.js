@@ -15,7 +15,7 @@ export const CreateVault = {
         hasVault: false,
         onUnlock: () => {},
       }}"
-    ></dimui-unlock>`,
+    />`,
 };
 
 export const Unlock = {
@@ -25,7 +25,7 @@ export const Unlock = {
         hasVault: true,
         onUnlock: () => {},
       }}"
-    ></dimui-unlock>`,
+    />`,
 };
 
 export const Error = {
@@ -36,5 +36,5 @@ export const Error = {
         error: "Wrong password.",
         onUnlock: () => {},
       }}"
-    ></dimui-unlock>`,
+    />`,
 };

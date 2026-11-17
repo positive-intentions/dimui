@@ -107,7 +107,7 @@ export const AddonPanel = define({
           onChange: onTab,
           "aria-label": "Addon panels",
         }}"
-      ></dimui-tabs>
+      />
       <div class="body" role="tabpanel">${body}</div>
     `;
   },

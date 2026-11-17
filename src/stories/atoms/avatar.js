@@ -14,9 +14,9 @@ export const Default = {
     html`<dimui-story-pad
       .props="${{
         layout: "row",
-        content: html`<dimui-avatar .props="${{ label: "AM", size: "md" }}"></dimui-avatar>`,
+        content: html`<dimui-avatar .props="${{ label: "AM", size: "md" }}" />`,
       }}"
-    ></dimui-story-pad>`,
+    />`,
 };
 
 export const Online = {
@@ -24,7 +24,7 @@ export const Online = {
     html`<dimui-story-pad
       .props="${{
         layout: "row",
-        content: html`<dimui-avatar .props="${{ label: "🤖", size: "lg", online: true }}"></dimui-avatar>`,
+        content: html`<dimui-avatar .props="${{ label: "🤖", size: "lg", online: true }}" />`,
       }}"
-    ></dimui-story-pad>`,
+    />`,
 };

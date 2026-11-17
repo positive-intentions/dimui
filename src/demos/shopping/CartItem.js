@@ -150,7 +150,7 @@ const CartItem = (props, { useRef, useStyle, html, css }) => {
           .value="${item.quantity}"
           @change="${(e) => updateQuantity(parseInt(e.target.value) || 1)}"
           @dblclick="${focusQuantityInput}"
-        />
+      />
         <button
           class="quantity-btn"
           @click="${() => updateQuantity(item.quantity + 1)}"

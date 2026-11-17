@@ -27,8 +27,8 @@ export const Default = {
               onProductClick: () => {},
               onAddToCart: () => {},
             }}"
-          ></dimui-product-card>
+          />
         </div>`,
       }}"
-    ></dimui-story-pad>`,
+    />`,
 };

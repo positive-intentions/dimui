@@ -105,7 +105,7 @@ const CatalogView = (props, { useState, useStyle, html, css }) => {
           placeholder="Search products..."
           .value="${search}"
           @input="${(e) => setSearch(e.target.value)}"
-        />
+      />
         <div class="filters">
           ${MOCK_CATEGORIES.map(
             (cat) => html`
@@ -129,7 +129,7 @@ const CatalogView = (props, { useState, useStyle, html, css }) => {
                 onProductClick,
                 onAddToCart,
               }}"
-            ></dimui-product-card>
+            />
           `
         )}
       </div>

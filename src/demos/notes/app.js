@@ -66,7 +66,7 @@ export const NotesApp = define({
       return tpl`
         <dimui-unlock
           .props="${{ onUnlock: unlock, error, theme }}"
-        ></dimui-unlock>
+        />
       `;
     }
 
@@ -79,7 +79,7 @@ export const NotesApp = define({
           onUnlockFailed: unlockFailed,
           theme,
         }}"
-      ></dimui-notes-shell>
+      />
     `;
   },
 });

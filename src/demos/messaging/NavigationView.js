@@ -98,7 +98,7 @@ const NavigationView = (props, { useStyle, html, css }) => {
             onBack: onContactBack,
             onMessage: onContactMessage,
           }}"
-        ></dimui-contact-details>
+        />
       </div>
     `;
   }
@@ -117,7 +117,7 @@ const NavigationView = (props, { useStyle, html, css }) => {
             onBack,
             onAvatarClick,
           }}"
-        ></dimui-chat-view>
+        />
       </div>
     `;
   }
@@ -130,7 +130,7 @@ const NavigationView = (props, { useStyle, html, css }) => {
             calls: MOCK_CALLS,
             onCallClick,
           }}"
-        ></dimui-calls-list>
+        />
       </div>
     `;
   }
@@ -138,7 +138,7 @@ const NavigationView = (props, { useStyle, html, css }) => {
   if (activeTab === 5) {
     return html`
       <div class="nav-view-root">
-        <dimui-messaging-profile .props="${{ user: MOCK_USER }}"></dimui-messaging-profile>
+        <dimui-messaging-profile .props="${{ user: MOCK_USER }}" />
       </div>
     `;
   }
@@ -151,7 +151,7 @@ const NavigationView = (props, { useStyle, html, css }) => {
           onConversationClick,
           onOpenContacts,
         }}"
-      ></dimui-conversation-list>
+      />
     </div>
   `;
 };

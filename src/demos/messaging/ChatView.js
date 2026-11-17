@@ -214,7 +214,7 @@ const ChatView = (props, { useState, useStyle, html, css }) => {
         src="${conversation.avatar}"
         alt="${conversation.name}"
         data-vt-shared="${keys.avatar}"
-      />
+    />
     `;
   };
 
@@ -259,7 +259,7 @@ const ChatView = (props, { useState, useStyle, html, css }) => {
                       class="avatar avatar-sm"
                       src="${msg.avatar}"
                       alt="${msg.username}"
-                    />
+                  />
                   `
                 : ""}
               <div>
@@ -289,7 +289,7 @@ const ChatView = (props, { useState, useStyle, html, css }) => {
           placeholder="Type a message..."
           .value="${draft}"
           @input="${(e) => setDraft(e.target.value)}"
-        />
+      />
         <button class="send-btn" title="Send">➤</button>
       </div>
     </div>

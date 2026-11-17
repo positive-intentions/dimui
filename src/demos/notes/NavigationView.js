@@ -66,7 +66,7 @@ const NavigationView = (props, { useStyle, html, css }) => {
             onCreate,
             onEmptyTrash,
           }}"
-        ></dimui-note-list>
+        />
       </div>
       <div class="editor-pane">
         <dimui-note-editor
@@ -83,7 +83,7 @@ const NavigationView = (props, { useStyle, html, css }) => {
             onRestore,
             onDeleteForever,
           }}"
-        ></dimui-note-editor>
+        />
       </div>
     </div>
   `;

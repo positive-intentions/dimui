@@ -82,14 +82,14 @@ const CartView = (props, { useStyle, html, css }) => {
                     setCart,
                     onProductClick,
                   }}"
-                ></dimui-cart-item>
+                />
               `
             )}
       </div>
       <div class="cart-footer">
         <dimui-cart-summary
           .props="${{ cart, onCheckout }}"
-        ></dimui-cart-summary>
+        />
       </div>
     </div>
   `;

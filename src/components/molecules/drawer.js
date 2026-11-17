@@ -70,7 +70,7 @@ export const Drawer = define({
     return tpl`
       <dimui-overlay
         .props="${{ open, onClick: onClose }}"
-      ></dimui-overlay>
+      />
       <div
         class="${sheetClass}"
         role="dialog"

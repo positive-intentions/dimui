@@ -132,7 +132,7 @@ const ContactDetailsView = (props, { useStyle, html, css }) => {
           alt="${contact.name}"
           style="margin: 0 auto;"
           data-vt-shared="${keys.avatar}"
-        />
+      />
         <h2 class="details-name" data-vt-shared="${keys.name}">${contact.name}</h2>
         <p class="details-status" data-vt-shared="${keys.status}">${statusText}</p>
       </div>

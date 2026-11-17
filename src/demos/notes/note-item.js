@@ -121,8 +121,7 @@ export const NoteItem = define({
         <span class="note-row-title" data-vt-shared="${titleAttr}">
           ${note.pinned
             ? tpl`<span class="pin-mark" aria-hidden="true"
-                ><dimui-icon .props="${{ name: "pin" }}"></dimui-icon
-              ></span>`
+                ><dimui-icon .props="${{ name: "pin" }}" /></span>`
             : null}
           ${title}
         </span>

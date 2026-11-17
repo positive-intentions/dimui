@@ -16,9 +16,9 @@ export const Contained = {
         layout: "row",
         content: html`<dimui-button
           .props="${{ label: "New", variant: "contained" }}"
-        ></dimui-button>`,
+        />`,
       }}"
-    ></dimui-story-pad>`,
+    />`,
 };
 
 export const Outlined = {
@@ -28,9 +28,9 @@ export const Outlined = {
         layout: "row",
         content: html`<dimui-button
           .props="${{ label: "Lock", variant: "outlined" }}"
-        ></dimui-button>`,
+        />`,
       }}"
-    ></dimui-story-pad>`,
+    />`,
 };
 
 export const Danger = {
@@ -40,9 +40,9 @@ export const Danger = {
         layout: "row",
         content: html`<dimui-button
           .props="${{ label: "Delete", variant: "danger" }}"
-        ></dimui-button>`,
+        />`,
       }}"
-    ></dimui-story-pad>`,
+    />`,
 };
 
 export const Sizes = {
@@ -51,10 +51,10 @@ export const Sizes = {
       .props="${{
         layout: "row",
         content: html`
-          <dimui-button .props="${{ label: "Small", size: "sm" }}"></dimui-button>
-          <dimui-button .props="${{ label: "Medium", size: "md" }}"></dimui-button>
-          <dimui-button .props="${{ label: "Large", size: "lg" }}"></dimui-button>
+          <dimui-button .props="${{ label: "Small", size: "sm" }}" />
+          <dimui-button .props="${{ label: "Medium", size: "md" }}" />
+          <dimui-button .props="${{ label: "Large", size: "lg" }}" />
         `,
       }}"
-    ></dimui-story-pad>`,
+    />`,
 };

@@ -75,7 +75,7 @@ const WelcomePage = define({
 
     return tpl`
       <div class="page">
-        <dimui-badge .props="${{ label: "dimui" }}"></dimui-badge>
+        <dimui-badge .props="${{ label: "dimui" }}" />
         <h1>Welcome</h1>
         <p class="lead">
           dimui is a Material-inspired component library built with
@@ -95,11 +95,11 @@ const WelcomePage = define({
         <div class="card">
           <h2>Shortcuts</h2>
           <div class="row">
-            <span class="hint"><dimui-kbd .props="${{ keys: "/" }}"></dimui-kbd> Search</span>
-            <span class="hint"><dimui-kbd .props="${{ keys: "S" }}"></dimui-kbd> Sidebar</span>
-            <span class="hint"><dimui-kbd .props="${{ keys: "D" }}"></dimui-kbd> Addons</span>
-            <span class="hint"><dimui-kbd .props="${{ keys: "T" }}"></dimui-kbd> Theme</span>
-            <span class="hint"><dimui-kbd .props="${{ keys: "F" }}"></dimui-kbd> Fullscreen</span>
+            <span class="hint"><dimui-kbd .props="${{ keys: "/" }}" /> Search</span>
+            <span class="hint"><dimui-kbd .props="${{ keys: "S" }}" /> Sidebar</span>
+            <span class="hint"><dimui-kbd .props="${{ keys: "D" }}" /> Addons</span>
+            <span class="hint"><dimui-kbd .props="${{ keys: "T" }}" /> Theme</span>
+            <span class="hint"><dimui-kbd .props="${{ keys: "F" }}" /> Fullscreen</span>
           </div>
         </div>
       </div>
@@ -109,7 +109,7 @@ const WelcomePage = define({
 
 export default {
   title: "Introduction/Welcome",
-  render: () => html`<dimui-welcome></dimui-welcome>`,
+  render: () => html`<dimui-welcome />`,
 };
 
 // Ensure the welcome element is registered when the story module loads.

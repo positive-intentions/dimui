@@ -21,10 +21,10 @@ const TextDemo = define({
                 value,
                 onInput: setValue,
               }}"
-            ></dimui-text-field>
+            />
           `,
         }}"
-      ></dimui-story-pad>
+            />
     `;
   },
 });
@@ -47,10 +47,10 @@ const PasswordDemo = define({
                 value,
                 onInput: setValue,
               }}"
-            ></dimui-text-field>
+            />
           `,
         }}"
-      ></dimui-story-pad>
+            />
     `;
   },
 });
@@ -60,11 +60,11 @@ export default {
 };
 
 export const Text = {
-  render: () => html`<dimui-story-text-demo></dimui-story-text-demo>`,
+  render: () => html`<dimui-story-text-demo />`,
 };
 
 export const Password = {
-  render: () => html`<dimui-story-password-demo></dimui-story-password-demo>`,
+  render: () => html`<dimui-story-password-demo />`,
 };
 
 void TextDemo;

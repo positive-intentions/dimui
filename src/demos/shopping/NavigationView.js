@@ -84,7 +84,7 @@ const NavigationView = (props, { useStyle, html, css }) => {
             onContinueShopping,
             onViewOrders,
           }}"
-        ></dimui-order-confirmation>
+        />
       </div>
     `;
   }
@@ -100,7 +100,7 @@ const NavigationView = (props, { useStyle, html, css }) => {
             onBack,
             onSubmit: onCheckoutSubmit,
           }}"
-        ></dimui-checkout-view>
+        />
       </div>
     `;
   }
@@ -119,7 +119,7 @@ const NavigationView = (props, { useStyle, html, css }) => {
             onAddToCart,
             onGoToCart,
           }}"
-        ></dimui-product-detail>
+        />
       </div>
     `;
   }
@@ -137,7 +137,7 @@ const NavigationView = (props, { useStyle, html, css }) => {
             onProductClick,
             onCheckout,
           }}"
-        ></dimui-cart-view>
+        />
       </div>
     `;
   }
@@ -145,7 +145,7 @@ const NavigationView = (props, { useStyle, html, css }) => {
   if (activeTab === 2) {
     return html`
       <div class="nav-view-root">
-        <dimui-orders-view .props="${{ orders, theme }}"></dimui-orders-view>
+        <dimui-orders-view .props="${{ orders, theme }}" />
       </div>
     `;
   }
@@ -161,7 +161,7 @@ const NavigationView = (props, { useStyle, html, css }) => {
             cart,
             setCart,
           }}"
-        ></dimui-shopping-profile>
+        />
       </div>
     `;
   }
@@ -175,7 +175,7 @@ const NavigationView = (props, { useStyle, html, css }) => {
           onProductClick,
           onAddToCart,
         }}"
-      ></dimui-catalog-view>
+      />
     </div>
   `;
 };

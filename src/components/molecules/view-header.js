@@ -56,7 +56,7 @@ export const ViewHeader = define({
                   size: "sm",
                   onClick: onBack,
                 }}"
-              ></dimui-icon-button>
+              />
             `
           : null}
         <h2 class="title">${title}</h2>

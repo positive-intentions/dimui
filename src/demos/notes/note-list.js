@@ -74,14 +74,14 @@ export const NoteList = define({
               value: search,
               onInput: setSearch,
             }}"
-          ></dimui-search-field>
+          />
         </div>
 
         ${sorted.length === 0
           ? tpl`
               <dimui-empty-state
                 .props="${{ title: emptyTitle, hint: emptyHint }}"
-              ></dimui-empty-state>
+              />
             `
           : tpl`
               <ul class="note-list">
@@ -95,7 +95,7 @@ export const NoteList = define({
                           shareTransition: note.id === selectedId,
                           onSelect,
                         }}"
-                      ></dimui-note-item>
+                      />
                     </li>
                   `,
                 )}
@@ -112,7 +112,7 @@ export const NoteList = define({
                     size: "sm",
                     onClick: onEmptyTrash,
                   }}"
-                ></dimui-button>
+                />
               </div>
             `
           : null}
@@ -126,7 +126,7 @@ export const NoteList = define({
                     label: "New note",
                     onClick: onCreate,
                   }}"
-                ></dimui-fab>
+                />
               </div>
             `
           : null}

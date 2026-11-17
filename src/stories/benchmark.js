@@ -170,5 +170,5 @@ export default {
 };
 
 export const Default = {
-  render: () => html`<dimui-keyed-list-benchmark></dimui-keyed-list-benchmark>`,
+  render: () => html`<dimui-keyed-list-benchmark />`,
 };

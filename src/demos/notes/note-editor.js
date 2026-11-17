@@ -52,7 +52,7 @@ export const NoteEditor = define({
               title: "Select a note",
               hint: "Choose a note from the list or create a new one.",
             }}"
-          ></dimui-empty-state>
+          />
         </section>
       `;
     }
@@ -99,7 +99,7 @@ export const NoteEditor = define({
                     label: "Back to notes",
                     onClick: onBack,
                   }}"
-                ></dimui-icon-button>
+                />
               `
             : null}
 
@@ -113,7 +113,7 @@ export const NoteEditor = define({
                     label: "Restore note",
                     onClick: () => onRestore(note.id),
                   }}"
-                ></dimui-icon-button>
+                />
                 <dimui-button
                   .props="${{
                     label: "Delete Forever",
@@ -121,7 +121,7 @@ export const NoteEditor = define({
                     size: "sm",
                     onClick: () => askConfirm("delete"),
                   }}"
-                ></dimui-button>
+                />
               `
             : tpl`
                 <dimui-icon-button
@@ -131,7 +131,7 @@ export const NoteEditor = define({
                     active: Boolean(note.pinned),
                     onClick: () => onTogglePin(note.id),
                   }}"
-                ></dimui-icon-button>
+                />
                 <select
                   class="folder-select"
                   aria-label="Move to folder"
@@ -151,7 +151,7 @@ export const NoteEditor = define({
                     label: "Move to trash",
                     onClick: () => askConfirm("trash"),
                   }}"
-                ></dimui-icon-button>
+                />
               `}
         </div>
 
@@ -163,7 +163,7 @@ export const NoteEditor = define({
             .value="${note.title || ""}"
             data-vt-shared="${keys.title}"
             @input="${(e) => patch({ title: e.target.value })}"
-          />
+                />
           <div class="editor-meta">
             <span data-vt-shared="${keys.time}"
               >${formatRelativeTime(note.updatedAt)}</span
@@ -193,7 +193,7 @@ export const NoteEditor = define({
                   size: "sm",
                   onClick: closeConfirm,
                 }}"
-              ></dimui-button>
+              />
               <dimui-button
                 .props="${{
                   label: confirmCopy.action,
@@ -201,7 +201,7 @@ export const NoteEditor = define({
                   size: "sm",
                   onClick: runConfirm,
                 }}"
-              ></dimui-button>
+              />
             </div>
           </div>
         </div>

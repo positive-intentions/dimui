@@ -14,9 +14,9 @@ const QtyDemo = define({
       <dimui-story-pad
         .props="${{
           layout: "row",
-          content: tpl`<dimui-qty-stepper .props="${{ value, onChange: setValue }}"></dimui-qty-stepper>`,
+          content: tpl`<dimui-qty-stepper .props="${{ value, onChange: setValue }}" />`,
         }}"
-      ></dimui-story-pad>
+      />
     `;
   },
 });
@@ -26,7 +26,7 @@ export default {
 };
 
 export const Default = {
-  render: () => html`<dimui-story-qty-demo></dimui-story-qty-demo>`,
+  render: () => html`<dimui-story-qty-demo />`,
 };
 
 void QtyDemo;

@@ -67,7 +67,7 @@ export const SearchField = define({
     return tpl`
       <div class="search" role="search">
         <span class="leading" aria-hidden="true">
-          <dimui-icon .props="${{ name: "search" }}"></dimui-icon>
+          <dimui-icon .props="${{ name: "search" }}" />
         </span>
         <input
           id="${id}"
@@ -76,7 +76,7 @@ export const SearchField = define({
           placeholder="${placeholder}"
           .value="${value}"
           @input="${(e) => onInput(e.target.value)}"
-        />
+          />
         ${value
           ? tpl`
               <dimui-icon-button
@@ -86,7 +86,7 @@ export const SearchField = define({
                   size: "sm",
                   onClick: onClear,
                 }}"
-              ></dimui-icon-button>
+              />
             `
           : null}
       </div>

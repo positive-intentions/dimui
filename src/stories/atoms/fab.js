@@ -14,7 +14,7 @@ export const Default = {
     html`<dimui-story-pad
       .props="${{
         layout: "row",
-        content: html`<dimui-fab .props="${{ name: "pencil", label: "New chat" }}"></dimui-fab>`,
+        content: html`<dimui-fab .props="${{ name: "pencil", label: "New chat" }}" />`,
       }}"
-    ></dimui-story-pad>`,
+    />`,
 };

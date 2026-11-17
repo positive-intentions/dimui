@@ -112,7 +112,7 @@ const CheckoutView = (props, { useState, useStyle, html, css }) => {
               type="text"
               .value="${name}"
               @input="${(e) => setName(e.target.value)}"
-            />
+          />
           </div>
           <div class="form-field">
             <label>Email</label>
@@ -120,7 +120,7 @@ const CheckoutView = (props, { useState, useStyle, html, css }) => {
               type="email"
               .value="${email}"
               @input="${(e) => setEmail(e.target.value)}"
-            />
+          />
           </div>
           <div class="form-field">
             <label>Address</label>
@@ -128,7 +128,7 @@ const CheckoutView = (props, { useState, useStyle, html, css }) => {
               type="text"
               .value="${address}"
               @input="${(e) => setAddress(e.target.value)}"
-            />
+          />
           </div>
         </div>
         <div class="form-section">
@@ -140,10 +140,10 @@ const CheckoutView = (props, { useState, useStyle, html, css }) => {
               placeholder="4242 4242 4242 4242"
               .value="${cardNumber}"
               @input="${(e) => setCardNumber(e.target.value)}"
-            />
+          />
           </div>
         </div>
-        <dimui-cart-summary .props="${{ cart, showCheckout: false }}"></dimui-cart-summary>
+        <dimui-cart-summary .props="${{ cart, showCheckout: false }}" />
         <button
           class="submit-btn"
           ?disabled="${!canSubmit}"

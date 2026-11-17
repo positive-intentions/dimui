@@ -21,7 +21,7 @@ const EmptyDemo = define({
             onCreate: () => {},
             onEmptyTrash: () => {},
           }}"
-        ></dimui-note-list>
+        />
       </div>
     `;
   },
@@ -44,7 +44,7 @@ const PopulatedDemo = define({
             onCreate: () => {},
             onEmptyTrash: () => {},
           }}"
-        ></dimui-note-list>
+        />
       </div>
     `;
   },
@@ -56,12 +56,12 @@ export default {
 
 export const Empty = {
   render: () =>
-    html`<dimui-story-note-list-empty></dimui-story-note-list-empty>`,
+    html`<dimui-story-note-list-empty />`,
 };
 
 export const Populated = {
   render: () =>
-    html`<dimui-story-note-list-populated></dimui-story-note-list-populated>`,
+    html`<dimui-story-note-list-populated />`,
 };
 
 void EmptyDemo;

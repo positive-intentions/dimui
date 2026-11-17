@@ -18,7 +18,7 @@ const EmptyDemo = define({
             onChange: () => {},
             onTrash: () => {},
           }}"
-        ></dimui-note-editor>
+        />
       </div>
     `;
   },
@@ -45,7 +45,7 @@ const EditingDemo = define({
             onRestore: () => {},
             onDeleteForever: () => {},
           }}"
-        ></dimui-note-editor>
+        />
       </div>
     `;
   },
@@ -68,7 +68,7 @@ const SavingDemo = define({
             onMoveFolder: () => {},
             onTrash: () => {},
           }}"
-        ></dimui-note-editor>
+        />
       </div>
     `;
   },
@@ -80,17 +80,17 @@ export default {
 
 export const Empty = {
   render: () =>
-    html`<dimui-story-note-editor-empty></dimui-story-note-editor-empty>`,
+    html`<dimui-story-note-editor-empty />`,
 };
 
 export const Editing = {
   render: () =>
-    html`<dimui-story-note-editor-editing></dimui-story-note-editor-editing>`,
+    html`<dimui-story-note-editor-editing />`,
 };
 
 export const Saving = {
   render: () =>
-    html`<dimui-story-note-editor-saving></dimui-story-note-editor-saving>`,
+    html`<dimui-story-note-editor-saving />`,
 };
 
 void EmptyDemo;

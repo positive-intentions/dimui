@@ -23,7 +23,7 @@ export const Selected = {
                 shareTransition: true,
                 onSelect: () => {},
               }}"
-            ></dimui-note-item>
+            />
             <dimui-note-item
               .props="${{
                 note: {
@@ -37,9 +37,9 @@ export const Selected = {
                 selected: false,
                 onSelect: () => {},
               }}"
-            ></dimui-note-item>
+            />
           </div>
         `,
       }}"
-    ></dimui-story-pad>`,
+    />`,
 };

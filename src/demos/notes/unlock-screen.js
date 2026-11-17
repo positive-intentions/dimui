@@ -81,7 +81,7 @@ export const UnlockScreen = define({
                   onInput: setPassword,
                   onKeydown,
                 }}"
-              ></dimui-text-field>
+              />
             </div>
 
             ${!hasVault
@@ -97,7 +97,7 @@ export const UnlockScreen = define({
                         onInput: setConfirm,
                         onKeydown,
                       }}"
-                    ></dimui-text-field>
+                    />
                   </div>
                 `
               : null}
@@ -109,7 +109,7 @@ export const UnlockScreen = define({
                 label: hasVault ? "Unlock" : "Create vault",
                 onClick: submit,
               }}"
-            ></dimui-button>
+            />
           </div>
         </div>
       </div>

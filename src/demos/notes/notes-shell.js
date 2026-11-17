@@ -350,7 +350,7 @@ export const NotesShell = define({
             class="folder-item ${active ? "active" : ""}"
             @click="${() => selectFolder(item.id)}"
           >
-            <dimui-icon .props="${{ name: item.icon || "folder" }}"></dimui-icon>
+            <dimui-icon .props="${{ name: item.icon || "folder" }}" />
             <span>${item.name}</span>
             <span class="count">${countFor(item.id)}</span>
           </button>
@@ -397,14 +397,14 @@ export const NotesShell = define({
                         if (e.key === "Enter") createFolder();
                         if (e.key === "Escape") setNewFolderOpen(false);
                       }}"
-                    />
+            />
                     <dimui-button
                       .props="${{
                         label: "Add",
                         size: "sm",
                         onClick: createFolder,
                       }}"
-                    ></dimui-button>
+                    />
                   </div>
                 `
               : tpl`
@@ -413,7 +413,7 @@ export const NotesShell = define({
                     class="new-folder-btn"
                     @click="${() => setNewFolderOpen(true)}"
                   >
-                    <dimui-icon .props="${{ name: "plus" }}"></dimui-icon>
+                    <dimui-icon .props="${{ name: "plus" }}" />
                     New Folder
                   </button>
                 `}
@@ -430,7 +430,7 @@ export const NotesShell = define({
                   label: "Lock vault",
                   onClick: onLock,
                 }}"
-              ></dimui-icon-button>
+              />
             </div>
           </header>
 
@@ -443,7 +443,7 @@ export const NotesShell = define({
                     selected: folderFilter === item.id,
                     onClick: () => selectFolder(item.id),
                   }}"
-                ></dimui-chip>
+                />
               `,
             )}
           </div>
@@ -471,7 +471,7 @@ export const NotesShell = define({
                 onDeleteForever: deleteForever,
                 onEmptyTrash: () => setConfirmEmpty(true),
               }}"
-            ></dimui-notes-nav>
+            />
           </div>
         </div>
 
@@ -491,7 +491,7 @@ export const NotesShell = define({
                   size: "sm",
                   onClick: () => setConfirmEmpty(false),
                 }}"
-              ></dimui-button>
+              />
               <dimui-button
                 .props="${{
                   label: "Empty Trash",
@@ -499,7 +499,7 @@ export const NotesShell = define({
                   size: "sm",
                   onClick: emptyTrash,
                 }}"
-              ></dimui-button>
+              />
             </div>
           </div>
         </div>

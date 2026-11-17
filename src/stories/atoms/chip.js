@@ -23,11 +23,11 @@ const ChipDemo = define({
                   selected: selected === label,
                   onClick: () => setSelected(label),
                 }}"
-              ></dimui-chip>
+              />
             `,
           )}`,
         }}"
-      ></dimui-story-pad>
+              />
     `;
   },
 });
@@ -41,13 +41,13 @@ export const Default = {
     html`<dimui-story-pad
       .props="${{
         layout: "row",
-        content: html`<dimui-chip .props="${{ label: "Electronics" }}"></dimui-chip>`,
+        content: html`<dimui-chip .props="${{ label: "Electronics" }}" />`,
       }}"
-    ></dimui-story-pad>`,
+    />`,
 };
 
 export const Selected = {
-  render: () => html`<dimui-story-chip-demo></dimui-story-chip-demo>`,
+  render: () => html`<dimui-story-chip-demo />`,
 };
 
 void ChipDemo;

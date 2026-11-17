@@ -16,7 +16,7 @@ export const Default = {
         layout: "stack full",
         content: html`<dimui-view-header
           .props="${{ title: "Product detail", onBack: () => {} }}"
-        ></dimui-view-header>`,
+        />`,
       }}"
-    ></dimui-story-pad>`,
+    />`,
 };

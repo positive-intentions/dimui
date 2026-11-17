@@ -525,7 +525,7 @@ export const Manager = define({
       <div class="root" style="${hostStyle}">
         <div class="${shellClass}">
           <div class="sidebar">
-            <dimui-sidebar .props="${sidebarProps}"></dimui-sidebar>
+            <dimui-sidebar .props="${sidebarProps}" />
           </div>
           <div
             class="resizer col nav-resizer"
@@ -544,7 +544,7 @@ export const Manager = define({
                   onClick: () =>
                     setTheme((t) => (t === "dark" ? "light" : "dark")),
                 }}"
-              ></dimui-icon-button>
+              />
               <dimui-icon-button
                 .props="${{
                   name: "sidebar",
@@ -553,7 +553,7 @@ export const Manager = define({
                   active: showNav,
                   onClick: () => setShowNav((v) => !v),
                 }}"
-              ></dimui-icon-button>
+              />
               <dimui-icon-button
                 .props="${{
                   name: "panel",
@@ -562,7 +562,7 @@ export const Manager = define({
                   active: showPanel,
                   onClick: () => setShowPanel((v) => !v),
                 }}"
-              ></dimui-icon-button>
+              />
               <dimui-icon-button
                 .props="${{
                   name: "desktop",
@@ -574,9 +574,9 @@ export const Manager = define({
                       p === "bottom" ? "right" : "bottom",
                     ),
                 }}"
-              ></dimui-icon-button>
+              />
             </div>
-            <dimui-preview-frame .props="${previewProps}"></dimui-preview-frame>
+            <dimui-preview-frame .props="${previewProps}" />
           </div>
           <div
             class="${panelResizerClass}"
@@ -589,7 +589,7 @@ export const Manager = define({
             <dimui-addon-panel
               position="${panelPosition}"
               .props="${addonProps}"
-            ></dimui-addon-panel>
+            />
           </div>
         </div>
 
@@ -603,10 +603,10 @@ export const Manager = define({
                 onClick: () =>
                   setTheme((t) => (t === "dark" ? "light" : "dark")),
               }}"
-            ></dimui-icon-button>
+            />
           </div>
           <div class="mobile-main">
-            <dimui-preview-frame .props="${previewProps}"></dimui-preview-frame>
+            <dimui-preview-frame .props="${previewProps}" />
           </div>
           <dimui-tabs
             .props="${{
@@ -620,25 +620,25 @@ export const Manager = define({
               ],
               onChange: setMobileTab,
             }}"
-          ></dimui-tabs>
+          />
           <dimui-drawer
             .props="${{
               open: mobileTab === "sidebar",
               placement: "bottom",
               "aria-label": "Stories",
               onClose: () => setMobileTab("canvas"),
-              content: tpl`<dimui-sidebar .props="${sidebarProps}"></dimui-sidebar>`,
+              content: tpl`<dimui-sidebar .props="${sidebarProps}" />`,
             }}"
-          ></dimui-drawer>
+          />
           <dimui-drawer
             .props="${{
               open: mobileTab === "addons",
               placement: "bottom",
               "aria-label": "Addons",
               onClose: () => setMobileTab("canvas"),
-              content: tpl`<dimui-addon-panel .props="${addonProps}"></dimui-addon-panel>`,
+              content: tpl`<dimui-addon-panel .props="${addonProps}" />`,
             }}"
-          ></dimui-drawer>
+          />
         </div>
       </div>
     `;

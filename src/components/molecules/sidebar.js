@@ -78,7 +78,7 @@ export const Sidebar = define({
             onInput: onQuery,
             onClear: () => onQuery(""),
           }}"
-        ></dimui-search-field>
+        />
       </div>
       <div class="tree-wrap">
         <dimui-tree
@@ -90,7 +90,7 @@ export const Sidebar = define({
             onSelect,
             onToggle,
           }}"
-        ></dimui-tree>
+        />
       </div>
     `;
   },

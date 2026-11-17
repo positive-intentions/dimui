@@ -44,7 +44,7 @@ export const Fab = define({
       typeof props.onClick === "function" ? props.onClick : () => {};
     return tpl`
       <button type="button" aria-label="${label}" @click="${onClick}">
-        <dimui-icon .props="${{ name }}"></dimui-icon>
+        <dimui-icon .props="${{ name }}" />
       </button>
     `;
   },

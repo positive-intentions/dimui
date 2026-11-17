@@ -148,7 +148,7 @@ const ContactsDrawer = (props, { useState, useStyle, html, css }) => {
             placeholder="Search contacts..."
             .value="${search}"
             @input="${(e) => setSearch(e.target.value)}"
-          />
+        />
         </div>
         <ul class="contacts-list">
           ${filtered.map(
@@ -162,7 +162,7 @@ const ContactsDrawer = (props, { useState, useStyle, html, css }) => {
                     class="avatar"
                     src="${contact.avatar}"
                     alt="${contact.name}"
-                  />
+                />
                   ${contact.isOnline
                     ? html`<span class="online-dot"></span>`
                     : ""}

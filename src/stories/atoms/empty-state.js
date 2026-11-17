@@ -18,7 +18,7 @@ export const Default = {
             title: "Your cart is empty",
             hint: "Browse the shop and add something you like.",
           }}"
-        ></dimui-empty-state>`,
+        />`,
       }}"
-    ></dimui-story-pad>`,
+    />`,
 };

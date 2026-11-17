@@ -129,7 +129,7 @@ const CallsListView = (props, { useStyle, html, css }) => {
                 src="${call.avatar}"
                 alt="${call.name}"
                 data-vt-shared="${keys.avatar}"
-              />
+            />
               <div class="call-body">
                 <div class="call-name" data-vt-shared="${keys.name}">${call.name}</div>
                 <div class="call-meta">
