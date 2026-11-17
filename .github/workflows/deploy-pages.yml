@@ -22,36 +22,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # file:../dim expects a sibling of this repo.
-      - name: Checkout dim sibling
-        uses: actions/checkout@v4
-        with:
-          repository: positive-intentions/dim
-          ref: staging
-          path: _dim
-
-      - name: Link dim for file:../dim
-        run: ln -sfn "$GITHUB_WORKSPACE/_dim" "$(dirname "$GITHUB_WORKSPACE")/dim"
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-          cache-dependency-path: _dim/package-lock.json
-
-      - name: Install and build dim
-        working-directory: _dim
-        run: |
-          npm ci
-          npm run build:lib
-
       - name: Prepare Pages artifact
         run: |
-          mkdir -p _site/node_modules/@positive-intentions/dim
-          cp index.html preview.html app.js preview.js _site/
+          mkdir -p _site
+          cp index.html preview.html app.js preview.js runtime.js _site/
           cp -r src _site/src
-          cp -r _dim/dist _site/node_modules/@positive-intentions/dim/dist
           cp _site/index.html _site/404.html
           touch _site/.nojekyll
 

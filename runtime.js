@@ -1,30 +1,27 @@
-// Classic (non-module) script: must run before any module script so the
-// import map it writes is in place when `@positive-intentions/dim` resolves.
-// `?impl=wasm` selects the Rust/WASM runtime (single file, inlined wasm);
-// `?impl=wasm-split` selects the streaming variant (needs an HTTP server).
+/**
+ * Classic (non-module) script: must run after the Dim CDN IIFE and before any
+ * module script so the import map is in place when `@positive-intentions/dim`
+ * resolves. Maps the bare specifier to a data: shim over globalThis.Dim
+ * (same pattern as dim-boilerplate).
+ */
 (function () {
-  var base = "./node_modules/@positive-intentions/dim/dist/";
-  var impl = new URLSearchParams(window.location.search).get("impl");
-  // Static servers with clean URLs (e.g. `serve`) redirect preview.html to
-  // /preview and drop the query, so the canvas iframe inherits the parent's.
-  if (!impl && window.parent !== window) {
-    try {
-      impl = window.parent.document.documentElement.dataset.dimRuntime;
-    } catch (_) {
-      impl = null;
-    }
+  if (!globalThis.Dim) {
+    throw new Error(
+      "Dim global missing. The inline script in index.html / preview.html " +
+        "should have loaded https://positive-intentions.github.io/dim/lib/" +
+        "dim.global.js (or dim.wasm.global.js).",
+    );
   }
-  var entry =
-    impl === "wasm"
-      ? "wasm/index.mjs"
-      : impl === "wasm-split"
-        ? "wasm/split/index.mjs"
-        : "index.mjs";
+
+  var keys = Object.keys(globalThis.Dim).join(",");
+  var shim = "const D=globalThis.Dim;export const{" + keys + "}=D;";
   var map = document.createElement("script");
   map.type = "importmap";
   map.textContent = JSON.stringify({
-    imports: { "@positive-intentions/dim": base + entry },
+    imports: {
+      "@positive-intentions/dim":
+        "data:text/javascript," + encodeURIComponent(shim),
+    },
   });
   document.currentScript.after(map);
-  document.documentElement.dataset.dimRuntime = entry === "index.mjs" ? "js" : impl;
 })();

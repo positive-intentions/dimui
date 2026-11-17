@@ -4,6 +4,35 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>dimui — Preview</title>
+    <!--
+      Sync-load Dim from the GitHub Pages CDN. Clean-URL servers often drop
+      preview's query string, so inherit ?impl= from the parent manager when needed.
+    -->
+    <script>
+      (function () {
+        var DIM_LIB = "https://positive-intentions.github.io/dim/lib/";
+        var impl = "js";
+        try {
+          var q = (new URLSearchParams(location.search || "").get("impl") || "")
+            .toLowerCase();
+          if (q === "js" || q === "wasm") {
+            impl = q;
+          } else if (window.parent !== window) {
+            try {
+              var parentImpl =
+                window.parent.document.documentElement.dataset.dimRuntime || "";
+              if (parentImpl === "js" || parentImpl === "wasm") impl = parentImpl;
+            } catch (_) {}
+          }
+        } catch (_) {}
+        document.documentElement.dataset.dimRuntime = impl;
+        var src =
+          impl === "wasm"
+            ? DIM_LIB + "dim.wasm.global.js"
+            : DIM_LIB + "dim.global.js";
+        document.write('<script src="' + src + '"><\/script>');
+      })();
+    </script>
     <script src="./runtime.js"></script>
     <style>
       html,

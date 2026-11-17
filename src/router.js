@@ -25,10 +25,10 @@ export function getLayoutFlags(search = window.location.search) {
   };
 }
 
-/** Dim runtime selected by `?impl=` (`js` default, `wasm`, `wasm-split`). */
+/** Dim runtime selected by `?impl=` (`js` default, `wasm`). */
 export function getRuntime(search = window.location.search) {
   const impl = readQuery(search).get("impl");
-  return impl === "wasm" || impl === "wasm-split" ? impl : "js";
+  return impl === "wasm" ? "wasm" : "js";
 }
 
 function keepRuntime(params) {

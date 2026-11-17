@@ -2,7 +2,7 @@
 
 Material-inspired component library built with [`@positive-intentions/dim`](https://www.npmjs.com/package/@positive-intentions/dim), plus a **custom Storybook-like explorer** (no Storybook dependency).
 
-Uses native ES modules and an [import map](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/script/type/importmap) — no bundler, no TypeScript.
+Uses native ES modules and an [import map](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/script/type/importmap) — no bundler, no TypeScript. Dim loads at runtime from the [GitHub Pages CDN](https://positive-intentions.github.io/dim/lib/) (same model as [dim-boilerplate](https://github.com/positive-intentions/dim-boilerplate)).
 
 ## What it is
 
@@ -19,17 +19,15 @@ When upgrading to `@positive-intentions/dim@0.1.2`:
 - Do not bind `onclick=` / `srcdoc=` / `.innerHTML=` — use `@click` and text/`unsafeHTML` instead.
 - URL attributes (`href`, `src`, …) are sanitized (`javascript:` → `about:invalid#dim`).
 
-See dim’s [MIGRATION.md](../dim/MIGRATION.md) and [SECURITY.md](../dim/SECURITY.md).
+See dim’s [MIGRATION.md](https://github.com/positive-intentions/dim/blob/staging/MIGRATION.md) and [SECURITY.md](https://github.com/positive-intentions/dim/blob/staging/SECURITY.md).
 
 ## Setup
 
-This project depends on the local Dim package (`file:../dim`). Build Dim first:
+Clone this repo. No Dim npm install or sibling build is required — the explorer fetches Dim over the network.
 
 ```bash
-cd ../dim
-npm run build:lib
-cd ../dimui
-npm install
+git clone https://github.com/positive-intentions/dimui.git
+cd dimui
 ```
 
 ## Run
@@ -43,19 +41,20 @@ Open [http://localhost:5173](http://localhost:5173).
 - Manager: `index.html` → `<dimui-manager>`
 - Canvas iframe: `preview.html` → `<dimui-preview>`
 
-You must use a static file server — `file://` will not resolve `node_modules` imports. If port 5173 is busy: change the port in `package.json` or free it with `fuser -k 5173/tcp`.
+A static file server is recommended (ES modules). Network is required for the Dim CDN. If port 5173 is busy: change the port in `package.json` or free it with `fuser -k 5173/tcp`.
+
+Live site: https://positive-intentions.github.io/dimui/
 
 ## Runtime: JS or Rust/WASM
 
-Dim ships two interchangeable runtimes with the same API. dimui picks one per page load via `?impl=` (handled by `runtime.js`, which writes the import map before any module loads):
+Dim ships interchangeable runtimes with the same API. dimui picks one per page load via `?impl=` (inline boot script loads the classic CDN IIFE; `runtime.js` installs a `data:` import-map shim over `window.Dim`):
 
 | URL | Runtime | Loads |
 |-----|---------|-------|
-| `/` or `?impl=js` | Pure JS (default) | `dist/index.mjs` |
-| `?impl=wasm` | Rust core, wasm inlined in one file | `dist/wasm/index.mjs` |
-| `?impl=wasm-split` | Rust core, streamed `.wasm` | `dist/wasm/split/index.mjs` + `dim_core_bg.wasm` |
+| `/` or `?impl=js` | Pure JS (default) | `dim/lib/dim.global.js` |
+| `?impl=wasm` | Rust core, wasm inlined | `dim/lib/dim.wasm.global.js` |
 
-No component code changes between runtimes. The flag is carried into the canvas iframe (`preview.html` inherits the manager's runtime, since clean-URL servers drop its query string). Build the WASM runtime in Dim first with `npm run build:lib` (needs Rust + `wasm-pack`).
+No component code changes between runtimes. The flag is carried into the canvas iframe (`preview.html` inherits the manager's runtime when clean-URL servers drop its query string).
 
 ## URL flags
 
@@ -65,7 +64,7 @@ No component code changes between runtimes. The flag is carried into the canvas 
 | `nav` | `?nav=false` | Hide sidebar |
 | `panel` | `?panel=false` / `?panel=right` | Hide panel or dock right |
 | `full` | `?full=true` | Fullscreen canvas |
-| `impl` | `?impl=wasm` | Dim runtime: `js` (default), `wasm`, `wasm-split` |
+| `impl` | `?impl=wasm` | Dim runtime: `js` (default) or `wasm` |
 
 Open a story canvas alone: `preview.html?id=demos-encrypted-notes`.
 
@@ -84,9 +83,9 @@ Open a story canvas alone: `preview.html?id=demos-encrypted-notes`.
 
 ```
 dimui/
-  index.html              # manager shell
-  preview.html            # story canvas iframe
-  runtime.js              # ?impl= → import map (JS or WASM Dim runtime)
+  index.html              # manager shell (CDN Dim boot)
+  preview.html            # story canvas iframe (CDN Dim boot)
+  runtime.js              # data: import-map shim over window.Dim
   app.js
   preview.js
   src/
