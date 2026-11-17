@@ -25,6 +25,17 @@ export function getLayoutFlags(search = window.location.search) {
   };
 }
 
+/** Dim runtime selected by `?impl=` (`js` default, `wasm`, `wasm-split`). */
+export function getRuntime(search = window.location.search) {
+  const impl = readQuery(search).get("impl");
+  return impl === "wasm" || impl === "wasm-split" ? impl : "js";
+}
+
+function keepRuntime(params) {
+  const runtime = getRuntime();
+  if (runtime !== "js") params.set("impl", runtime);
+}
+
 export function buildManagerUrl({
   storyId,
   showNav = true,
@@ -38,6 +49,7 @@ export function buildManagerUrl({
   if (!showPanel) params.set("panel", "false");
   else if (panelPosition === "right") params.set("panel", "right");
   if (fullscreen) params.set("full", "true");
+  keepRuntime(params);
   const qs = params.toString();
   return `${window.location.pathname}${qs ? `?${qs}` : ""}`;
 }
@@ -45,6 +57,7 @@ export function buildManagerUrl({
 export function buildPreviewUrl(storyId) {
   const params = new URLSearchParams();
   if (storyId) params.set("id", storyId);
+  keepRuntime(params);
   const qs = params.toString();
   return `preview.html${qs ? `?${qs}` : ""}`;
 }

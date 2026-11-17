@@ -18,6 +18,7 @@ import * as notesShellStories from "./stories/organisms/notes-shell.js";
 import * as notesStory from "./stories/notes.js";
 import * as messagingStory from "./stories/messaging.js";
 import * as shoppingStory from "./stories/shopping.js";
+import * as benchmarkStory from "./stories/benchmark.js";
 
 const modules = [
   welcomeStory,
@@ -40,6 +41,7 @@ const modules = [
   notesStory,
   messagingStory,
   shoppingStory,
+  benchmarkStory,
 ];
 
 function titleToId(title) {
