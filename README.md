@@ -1,13 +1,48 @@
-# dimui
+<p align="center">
+  <img src="public/dim.png" alt="Dim Framework Logo" width="200" />
+</p>
 
-Material-inspired component library built with [`Dim`](https://github.com/positive-intentions/dim), plus a **custom Storybook-like explorer** (no Storybook dependency).
+<h1 align="center">dimui</h1>
 
-Uses **classic scripts** and a tiny `BP` module registry — no bundler, no TypeScript, no Dim npm install. Dim loads at runtime from the [GitHub Pages CDN](https://positive-intentions.github.io/dim/lib/) (same model as [dim-boilerplate](https://github.com/positive-intentions/dim-boilerplate)). Components register with `BP.module("dimui/…", deps, factory)` and read APIs from `window.Dim`.
+<p align="center">
+  <strong>Material-inspired component library for Dim — plus a Storybook-like explorer</strong>
+</p>
+
+<p align="center">
+  No bundler, no TypeScript, no Dim npm install. Classic scripts + a tiny
+  <code>BP</code> registry; Dim loads from the CDN at runtime.
+</p>
+
+<div align="center">
+
+[**Live**](https://positive-intentions.github.io/dimui/) | [**dim**](https://github.com/positive-intentions/dim) | [**dim-boilerplate**](https://github.com/positive-intentions/dim-boilerplate) | [**dimim**](https://github.com/positive-intentions/dimim)
+
+</div>
+
+<div align="center">
+
+![GitHub stars](https://img.shields.io/github/stars/positive-intentions/dimui?style=social)
+![GitHub forks](https://img.shields.io/github/forks/positive-intentions/dimui?style=social)
+![GitHub issues](https://img.shields.io/github/issues/positive-intentions/dimui)
+![License](https://img.shields.io/badge/License-GPLv3-blue.svg)
+![Deploy](https://github.com/positive-intentions/dimui/actions/workflows/deploy-pages.yml/badge.svg)
+[![gh-pages-build-deployment](https://github.com/positive-intentions/dimui/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/positive-intentions/dimui/actions/workflows/pages/pages-build-deployment)
+
+</div>
+
+---
+
+Atoms and molecules live under `src/components/`. The explorer (sidebar, canvas
+iframe, addons) is a custom Storybook-like shell with **no Storybook dependency**.
+Components register with `BP.module("dimui/…", deps, factory)` and use
+`window.Dim`. Dim itself loads from the
+[GitHub Pages CDN](https://positive-intentions.github.io/dim/lib/) (same model as
+[dim-boilerplate](https://github.com/positive-intentions/dim-boilerplate)).
 
 ## What it is
 
 - **Explorer** — sidebar story tree, canvas iframe, addon panel, mobile bottom sheets, theme toggle, viewport presets, and keyboard shortcuts.
-- **Atomic chrome** — atoms and molecules under `src/components/` used by the explorer (and consumers like dim-boilerplate).
+- **Atomic chrome** — atoms and molecules under `src/components/` used by the explorer (and consumers like dim-boilerplate / dimim).
 - **Stories** — CSF-inspired modules in `src/stories/` registered via `src/registry.js`.
 - **Demos** — encrypted notes, messaging, and shopping apps under `src/demos/` (messaging/shopping keep `transitionId` + `data-vt-shared` view transitions).
 
@@ -32,7 +67,7 @@ cd dimui
 
 ## Run
 
-Serve the directory over HTTP (ES module fetches are gone, but browsers still need a real origin for multi-script pages and the Dim CDN):
+Serve the directory over HTTP (browsers need a real origin for multi-script pages and the Dim CDN):
 
 ```bash
 python3 -m http.server 5173
@@ -50,8 +85,6 @@ Open [http://localhost:5173](http://localhost:5173).
 - Canvas iframe: `preview.html` → `<dimui-preview>`
 
 Network is required for the Dim CDN. If port 5173 is busy, pick another port.
-
-Live site: https://positive-intentions.github.io/dimui/
 
 ## Runtime: JS or Rust/WASM
 
@@ -112,9 +145,12 @@ dimui/
       welcome.js
 ```
 
-## Consuming from dim-boilerplate
+## Consuming from dim-boilerplate / dimim
 
-Boilerplate proxies load remote classic scripts, e.g. `dimui/components/atoms/button` → `https://positive-intentions.github.io/dimui/src/components/atoms/button.js`, which calls `BP.module` into the page registry. Override the base with `?dimuiSrc=http://127.0.0.1:5173/src/` while developing.
+Apps load remote classic scripts, e.g. `dimui/components/atoms/button` →
+`https://positive-intentions.github.io/dimui/src/components/atoms/button.js`,
+which calls `BP.module` into the page registry. Override the base while
+developing with `?dimuiSrc=http://127.0.0.1:5173/src/`.
 
 ## Adding a story
 
