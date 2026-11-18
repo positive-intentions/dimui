@@ -1,6 +1,6 @@
 BP.module(
   "dimui/stories/molecules/note-item",
-  ["dimui/demos/notes/note-item","dimui/stories/pad","dimui/stories/fixtures"],
+  ["dimui/components/notes/molecules/note-item","dimui/stories/pad","dimui/stories/fixtures"],
   function (__dep0, __dep1, __dep2) {
   const { html } = Dim;
   const { NoteItem } = __dep0;

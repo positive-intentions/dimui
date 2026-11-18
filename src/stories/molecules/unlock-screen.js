@@ -1,6 +1,6 @@
 BP.module(
   "dimui/stories/molecules/unlock-screen",
-  ["dimui/demos/notes/unlock-screen"],
+  ["dimui/components/molecules/unlock-screen"],
   function (__dep0) {
   const { html } = Dim;
   const { UnlockScreen } = __dep0;
@@ -13,6 +13,7 @@ BP.module(
     render: () =>
       html`<dimui-unlock
         .props="${{
+          title: "Notes",
           hasVault: false,
           onUnlock: () => {},
         }}"
@@ -22,6 +23,7 @@ BP.module(
     render: () =>
       html`<dimui-unlock
         .props="${{
+          title: "Notes",
           hasVault: true,
           onUnlock: () => {},
         }}"
@@ -31,6 +33,7 @@ BP.module(
     render: () =>
       html`<dimui-unlock
         .props="${{
+          title: "Notes",
           hasVault: true,
           error: "Wrong password.",
           onUnlock: () => {},

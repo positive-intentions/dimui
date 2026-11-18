@@ -43,6 +43,13 @@ BP.module(
       --dimui-color-text-faint: var(--dimui-doc-text-faint, #64748b);
       --dimui-color-focus: var(--dimui-doc-focus, #029cfd);
       --dimui-shadow: var(--dimui-doc-shadow, 0 8px 24px rgba(0, 0, 0, 0.35));
+
+      /* Messaging kit */
+      --dimui-bubble-out: var(--dimui-doc-bubble-out, #029cfd);
+      --dimui-bubble-out-text: var(--dimui-doc-bubble-out-text, #0f172a);
+      --dimui-bubble-in: var(--dimui-doc-bubble-in, #1e293b);
+      --dimui-bubble-in-text: var(--dimui-doc-bubble-in-text, #e2e8f0);
+      --dimui-color-ok: var(--dimui-doc-ok, #4ade80);
     }
   `;
   const STORAGE_KEYS = {
@@ -99,6 +106,11 @@ BP.module(
     "--dimui-doc-text-faint": "#64748b",
     "--dimui-doc-focus": "#029cfd",
     "--dimui-doc-shadow": "0 8px 24px rgba(0, 0, 0, 0.35)",
+    "--dimui-doc-bubble-out": "#029cfd",
+    "--dimui-doc-bubble-out-text": "#0f172a",
+    "--dimui-doc-bubble-in": "#1e293b",
+    "--dimui-doc-bubble-in-text": "#e2e8f0",
+    "--dimui-doc-ok": "#4ade80",
   };
 
   const LIGHT = {
@@ -118,13 +130,19 @@ BP.module(
     "--dimui-doc-text-faint": "#94a3b8",
     "--dimui-doc-focus": "#0284d4",
     "--dimui-doc-shadow": "0 8px 24px rgba(15, 23, 42, 0.12)",
+    "--dimui-doc-bubble-out": "#0284d4",
+    "--dimui-doc-bubble-out-text": "#ffffff",
+    "--dimui-doc-bubble-in": "#e2e8f0",
+    "--dimui-doc-bubble-in-text": "#0f172a",
+    "--dimui-doc-ok": "#16a34a",
   };
   function applyDocumentTheme(theme) {
     const root = document.documentElement;
     const vars = theme === "light" ? LIGHT : DARK;
     root.dataset.theme = theme === "light" ? "light" : "dark";
-    for (const [key, value] of Object.entries(vars)) {
-      root.style.setProperty(key, value);
+    const entries = Object.entries(vars);
+    for (let i = 0; i < entries.length; i++) {
+      root.style.setProperty(entries[i][0], entries[i][1]);
     }
     root.style.background = vars["--dimui-doc-bg"];
     root.style.color = vars["--dimui-doc-text"];

@@ -32,19 +32,89 @@
 
 ---
 
-Atoms and molecules live under `src/components/`. The explorer (sidebar, canvas
-iframe, addons) is a custom Storybook-like shell with **no Storybook dependency**.
-Components register with `BP.module("dimui/…", deps, factory)` and use
-`window.Dim`. Dim itself loads from the
-[GitHub Pages CDN](https://positive-intentions.github.io/dim/lib/) (same model as
-[dim-boilerplate](https://github.com/positive-intentions/dim-boilerplate)).
+dimui is the **shared UI** for Dim apps: design-system atoms/molecules, a notes
+kit, and a messaging kit. The explorer (sidebar, canvas iframe, addons) is a
+custom Storybook-like shell with **no Storybook dependency**. Components
+register with `BP.module("dimui/…", deps, factory)` and use `window.Dim`. Dim
+loads from the
+[GitHub Pages CDN](https://positive-intentions.github.io/dim/lib/).
 
 ## What it is
 
-- **Explorer** — sidebar story tree, canvas iframe, addon panel, mobile bottom sheets, theme toggle, viewport presets, and keyboard shortcuts.
-- **Atomic chrome** — atoms and molecules under `src/components/` used by the explorer (and consumers like dim-boilerplate / dimim).
-- **Stories** — CSF-inspired modules in `src/stories/` registered via `src/registry.js`.
-- **Demos** — encrypted notes, messaging, and shopping apps under `src/demos/` (messaging/shopping keep `transitionId` + `data-vt-shared` view transitions).
+- **Design system** — atoms + generic molecules under `src/components/`
+- **Notes kit** — `src/components/notes/` + `src/lib/notes/` (canonical UI for dim-boilerplate)
+- **Messaging kit** — `src/components/messaging/` + `src/lib/messaging/` (presentational chat UI for dimim)
+- **Explorer** — `src/explorer/` (sidebar, tree, preview-frame, addon-panel, kbd)
+- **Stories / demos** — CSF modules in `src/stories/`; demos under `src/demos/` consume the kits
+
+## Module inventory
+
+### Theme
+
+| Module | Tag / export | Notes |
+|--------|--------------|-------|
+| `dimui/theme` | `themeTokens`, `applyDocumentTheme`, … | Document `--dimui-doc-*` → host `--dimui-color-*`; includes bubble/ok vars |
+
+Apps may keep `--notes-*` / `--chat-*` as **aliases** onto `--dimui-color-*` /
+`--dimui-bubble-*` (see `dimui/lib/notes/tokens`, `dimui/lib/messaging/tokens`).
+
+### Atoms (`dimui-*`)
+
+`avatar`, `badge`, `button`, `chip`, `divider`, `empty-state`, `fab`, `icon`,
+`icon-button`, `overlay`, `qty-stepper`, `qr-code`, `text-area`, `text-field`
+
+### Generic molecules
+
+| Module | Tag |
+|--------|-----|
+| `dimui/components/molecules/app-shell` | `dimui-app-shell` |
+| `dimui/components/molecules/confirm-dialog` | `dimui-confirm-dialog` |
+| `dimui/components/molecules/drawer` | `dimui-drawer` |
+| `dimui/components/molecules/overflow-menu` | `dimui-overflow-menu` |
+| `dimui/components/molecules/qr-scanner` | `dimui-qr-scanner` |
+| `dimui/components/molecules/search-field` | `dimui-search-field` |
+| `dimui/components/molecules/tabs` | `dimui-tabs` |
+| `dimui/components/molecules/toolbar` | `dimui-toolbar` (library; unused by explorer today) |
+| `dimui/components/molecules/unlock-screen` | `dimui-unlock` |
+| `dimui/components/molecules/view-header` | `dimui-view-header` |
+
+### Notes kit
+
+| Module | Tag |
+|--------|-----|
+| `…/notes/molecules/folder-item` | `dimui-folder-item` |
+| `…/notes/molecules/mobile-folder-bar` | `dimui-mobile-folder-bar` |
+| `…/notes/molecules/note-item` | `dimui-note-item` |
+| `…/notes/molecules/notes-header` | `dimui-notes-header` |
+| `…/notes/organisms/folder-rail` | `dimui-folder-rail` |
+| `…/notes/organisms/note-list` | `dimui-note-list` |
+| `…/notes/organisms/note-editor` | `dimui-note-editor` |
+| `…/notes/organisms/navigation-view` | `dimui-notes-nav` |
+| `…/notes/organisms/notes-shell` | `dimui-notes-shell` |
+| `…/notes/templates/notes-layout` | `dimui-notes-layout` |
+
+Helpers: `dimui/lib/notes/{mockData,sharedKeys,note-filters,vault,tokens}`
+
+### Messaging kit
+
+| Module | Tag |
+|--------|-----|
+| `…/messaging/molecules/message-bubble` | `dimui-message-bubble` |
+| `…/messaging/molecules/composer` | `dimui-composer` |
+| `…/messaging/molecules/chat-header` | `dimui-chat-header` |
+| `…/messaging/molecules/incoming-call-banner` | `dimui-incoming-call-banner` |
+| `…/messaging/organisms/chat-thread` | `dimui-chat-thread` |
+
+Helpers: `dimui/lib/messaging/{messages,tokens}`
+
+### Explorer-only (`src/explorer/`)
+
+`sidebar`, `tree`, `preview-frame`, `addon-panel`, `kbd` — not for app shells.
+
+### Stays in apps
+
+- **dim-boilerplate**: host chrome (`boilerplate-app`), PWA, page wrapper, e2e
+- **dimim**: WebRTC/`chat-shell`, pairing, share-code, call-screen, meet-app, e2e
 
 ## Dim security notes
 
@@ -58,8 +128,6 @@ See dim’s [MIGRATION.md](https://github.com/positive-intentions/dim/blob/stagi
 
 ## Setup
 
-Clone this repo. No Dim npm install or sibling build is required — the explorer fetches Dim over the network.
-
 ```bash
 git clone https://github.com/positive-intentions/dimui.git
 cd dimui
@@ -67,35 +135,31 @@ cd dimui
 
 ## Run
 
-Serve the directory over HTTP (browsers need a real origin for multi-script pages and the Dim CDN):
+Serve over HTTP (browsers need a real origin for multi-script pages and the Dim CDN):
 
 ```bash
 python3 -m http.server 5173
 ```
 
-Or optionally:
-
-```bash
-npm start
-```
-
-Open [http://localhost:5173](http://localhost:5173).
+Or `npm start`. Open [http://localhost:5173](http://localhost:5173).
 
 - Manager: `index.html` → `<dimui-manager>`
 - Canvas iframe: `preview.html` → `<dimui-preview>`
+- Tests: `runTests.html` (DimTest + coverage)
 
-Network is required for the Dim CDN. If port 5173 is busy, pick another port.
+## Tests
+
+Open [`runTests.html`](./runTests.html) the same way as the explorer. CI runs
+`.github/workflows/test.yml` against js + wasm via Playwright.
+
+Useful flags: `?impl=js|wasm`, `?dimLib=…`.
 
 ## Runtime: JS or Rust/WASM
-
-Dim ships interchangeable runtimes with the same API. dimui picks one per page load via `?impl=` (inline boot script loads the classic CDN IIFE; classic `src/**/*.js` scripts use `Dim.*`):
 
 | URL | Runtime | Loads |
 |-----|---------|-------|
 | `/` or `?impl=js` | Pure JS (default) | `dim/lib/dim.global.js` |
 | `?impl=wasm` | Rust core, wasm inlined | `dim/lib/dim.wasm.global.js` |
-
-No component code changes between runtimes. The flag is carried into the canvas iframe (`preview.html` inherits the manager's runtime when clean-URL servers drop its query string).
 
 ## URL flags
 
@@ -107,50 +171,35 @@ No component code changes between runtimes. The flag is carried into the canvas 
 | `full` | `?full=true` | Fullscreen canvas |
 | `impl` | `?impl=wasm` | Dim runtime: `js` (default) or `wasm` |
 
-Open a story canvas alone: `preview.html?id=demos-encrypted-notes`.
-
-## Shortcuts
-
-| Key | Action |
-|-----|--------|
-| `/` | Focus search |
-| `S` | Toggle sidebar |
-| `D` | Toggle addons |
-| `T` | Toggle theme |
-| `F` | Toggle fullscreen |
-| `Esc` | Close mobile sheet / exit fullscreen |
-
 ## Layout
 
 ```
 dimui/
-  index.html              # manager shell (CDN Dim + classic scripts)
-  preview.html            # story canvas iframe
-  runtime.js              # BP module registry
-  app.js / preview.js     # BP.require explorer entries
+  index.html / preview.html / runTests.html
+  runtime.js
   src/
-    theme.js              # dimui/theme
-    registry.js
-    router.js
+    theme.js
     components/
       atoms/
-      molecules/
-    explorer/
-      manager.js
-      preview-root.js
-      shortcuts.js
-    demos/
+      molecules/          # design-system chrome
+      notes/              # notes kit
+      messaging/          # messaging kit
+    lib/
       notes/
+      messaging/
+    explorer/             # Storybook-like shell widgets
+    demos/                # thin consumers of kits
     stories/
-      welcome.js
 ```
 
 ## Consuming from dim-boilerplate / dimim
 
 Apps load remote classic scripts, e.g. `dimui/components/atoms/button` →
-`https://positive-intentions.github.io/dimui/src/components/atoms/button.js`,
-which calls `BP.module` into the page registry. Override the base while
-developing with `?dimuiSrc=http://127.0.0.1:5173/src/`.
+`https://positive-intentions.github.io/dimui/src/components/atoms/button.js`.
+Override while developing with `?dimuiSrc=http://127.0.0.1:5173/src/`.
+
+Apps keep thin `BP.module` proxies under stable local ids (`notes/…`, `chat/…`)
+so PWA precache lists and tests stay predictable.
 
 ## Adding a story
 

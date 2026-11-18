@@ -1,0 +1,54 @@
+name: Library tests
+
+on:
+  push:
+    branches:
+      - staging
+      - main
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  dimtest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Start static server
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 &
+          echo $! > /tmp/dim-http.pid
+          for i in $(seq 1 30); do
+            if curl -sf -o /dev/null http://127.0.0.1:4173/runTests.html; then
+              exit 0
+            fi
+            sleep 0.5
+          done
+          echo "Server failed to start"
+          exit 1
+
+      # Throwaway install so the library repo stays without a hard Playwright dep.
+      - name: Install Playwright (CI only)
+        working-directory: ${{ runner.temp }}
+        run: |
+          npm init -y
+          npm install playwright@1.49.1
+          npx playwright install --with-deps chromium
+
+      - name: Run DimTest (js + wasm)
+        run: node .github/scripts/run-app-tests.mjs
+        env:
+          BASE_URL: http://127.0.0.1:4173
+          NODE_PATH: ${{ runner.temp }}/node_modules
+
+      - name: Stop static server
+        if: always()
+        run: |
+          if [ -f /tmp/dim-http.pid ]; then
+            kill "$(cat /tmp/dim-http.pid)" || true
+          fi

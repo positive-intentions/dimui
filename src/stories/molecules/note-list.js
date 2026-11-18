@@ -1,6 +1,6 @@
 BP.module(
   "dimui/stories/molecules/note-list",
-  ["dimui/demos/notes/note-list","dimui/stories/fixtures","dimui/demos/notes/mockData"],
+  ["dimui/components/notes/organisms/note-list","dimui/stories/fixtures","dimui/lib/notes/mockData"],
   function (__dep0, __dep1, __dep2) {
   const { html, define, useState, useScope } = Dim;
   const { NoteList } = __dep0;

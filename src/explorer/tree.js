@@ -1,5 +1,5 @@
 BP.module(
-  "dimui/components/molecules/tree",
+  "dimui/explorer/tree",
   ["dimui/theme","dimui/components/atoms/icon"],
   function (__dep0, __dep1) {
   const { define, html, css, useStyle, useScope } = Dim;

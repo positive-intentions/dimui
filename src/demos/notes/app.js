@@ -1,12 +1,17 @@
 BP.module(
   "dimui/demos/notes/app",
-  ["dimui/demos/notes/styles","dimui/demos/notes/unlock-screen","dimui/demos/notes/notes-shell","dimui/theme"],
-  function (__dep0, __dep1, __dep2, __dep3) {
-  const { define, html, useState, useEffect, useRef, useScope, useStyle } = Dim;
-  const { appStyles } = __dep0;
-  const { UnlockScreen } = __dep1;
-  const { NotesShell } = __dep2;
-  const { getStoredTheme, subscribeExplorerTheme } = __dep3;
+  [
+    "dimui/lib/notes/tokens",
+    "dimui/components/molecules/unlock-screen",
+    "dimui/components/notes/organisms/notes-shell",
+    "dimui/theme",
+  ],
+  function (tokens, unlock, shell, theme) {
+  const { define, useState, useEffect, useRef, useScope, useStyle } = Dim;
+  const { notesTokens } = tokens;
+  const { UnlockScreen } = unlock;
+  const { NotesShell } = shell;
+  const { getStoredTheme, subscribeExplorerTheme } = theme;
   const NotesApp = define({
     tag: "dimui-notes-app",
     component: (
@@ -20,23 +25,23 @@ BP.module(
         useStyle: style,
       },
     ) => {
-      style(appStyles);
+      style(notesTokens);
       scope({ UnlockScreen, NotesShell });
 
       const [password, setPassword] = state(null);
       const [creating, setCreating] = state(false);
       const [error, setError] = state("");
-      const [theme, setTheme] = state(getStoredTheme());
+      const [themeMode, setTheme] = state(getStoredTheme());
       const hostRef = ref();
 
       effect(() => subscribeExplorerTheme(setTheme), []);
 
       effect(() => {
         const host = hostRef.current;
-        if (host?.setAttribute) host.setAttribute("data-theme", theme);
-      }, [theme]);
+        if (host?.setAttribute) host.setAttribute("data-theme", themeMode);
+      }, [themeMode]);
 
-      const unlock = (value, { create }) => {
+      const unlockVault = (value, { create }) => {
         setError("");
         setCreating(Boolean(create));
         setPassword(value);
@@ -57,7 +62,17 @@ BP.module(
       if (!password) {
         return tpl`
           <dimui-unlock
-            .props="${{ onUnlock: unlock, error, theme }}"
+            .props="${{
+              title: "Notes",
+              unlockHint:
+                "Enter your password to decrypt notes stored in this browser.",
+              createHint:
+                "Choose a password to encrypt your notes. There is no recovery if you forget it.",
+              vaultFlag: "dimui-vault",
+              onUnlock: unlockVault,
+              error,
+              theme: themeMode,
+            }}"
           />
         `;
       }
@@ -69,7 +84,7 @@ BP.module(
             create: creating,
             onLock: lock,
             onUnlockFailed: unlockFailed,
-            theme,
+            theme: themeMode,
           }}"
         />
       `;

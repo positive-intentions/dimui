@@ -1,6 +1,6 @@
 BP.module(
-  "dimui/components/molecules/sidebar",
-  ["dimui/theme","dimui/components/molecules/search-field","dimui/components/molecules/tree"],
+  "dimui/explorer/sidebar",
+  ["dimui/theme","dimui/components/molecules/search-field","dimui/explorer/tree"],
   function (__dep0, __dep1, __dep2) {
   const { define, html, css, useStyle, useScope } = Dim;
   const { themeTokens } = __dep0;

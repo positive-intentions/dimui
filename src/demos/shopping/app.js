@@ -1,3 +1,7 @@
+/**
+ * Shopping demo shell is demo-only (emoji tabs + custom CSS).
+ * Production apps should prefer dimui/components/molecules/app-shell.
+ */
 BP.module(
   "dimui/demos/shopping/app",
   ["dimui/demos/shopping/sharedStyles","dimui/demos/shopping/mockData","dimui/theme","dimui/demos/shopping/NavigationView"],

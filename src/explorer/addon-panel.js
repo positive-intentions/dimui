@@ -1,5 +1,5 @@
 BP.module(
-  "dimui/components/molecules/addon-panel",
+  "dimui/explorer/addon-panel",
   ["dimui/theme","dimui/components/molecules/tabs"],
   function (__dep0, __dep1) {
   const { define, html, css, useStyle, useScope } = Dim;

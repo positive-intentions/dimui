@@ -1,6 +1,6 @@
 BP.module(
   "dimui/stories/welcome",
-  ["dimui/components/atoms/kbd","dimui/components/atoms/badge"],
+  ["dimui/explorer/kbd","dimui/components/atoms/badge"],
   function (__dep0, __dep1) {
   const { define, html, css, useStyle, useScope } = Dim;
   const { Kbd } = __dep0;

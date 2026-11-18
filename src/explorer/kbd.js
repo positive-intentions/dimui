@@ -1,5 +1,5 @@
 BP.module(
-  "dimui/components/atoms/kbd",
+  "dimui/explorer/kbd",
   ["dimui/theme"],
   function (__dep0) {
   const { define, html, css, useStyle } = Dim;

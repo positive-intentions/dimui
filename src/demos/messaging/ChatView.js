@@ -1,21 +1,55 @@
 BP.module(
   "dimui/demos/messaging/ChatView",
-  ["dimui/demos/messaging/sharedStyles","dimui/demos/messaging/sharedKeys"],
-  function (__dep0, __dep1) {
-  const { define, html, css, useState, useStyle } = Dim;
+  [
+    "dimui/demos/messaging/sharedStyles",
+    "dimui/demos/messaging/sharedKeys",
+    "dimui/components/messaging/molecules/message-bubble",
+    "dimui/components/messaging/molecules/composer",
+    "dimui/components/atoms/icon-button",
+    "dimui/components/atoms/avatar",
+    "dimui/lib/messaging/messages",
+  ],
+  function (
+    __dep0,
+    __dep1,
+    bubbleMod,
+    composerMod,
+    iconButton,
+    avatarMod,
+    messagesLib,
+  ) {
+  const { define, html, css, useState, useStyle, useScope } = Dim;
   const { appVariables, avatarStyles } = __dep0;
   const { sharedKeys } = __dep1;
-  const ChatView = (props, { useState, useStyle, html, css }) => {
+  const { MessageBubble } = bubbleMod;
+  const { Composer } = composerMod;
+  const { IconButton } = iconButton;
+  const { Avatar } = avatarMod;
+  const { normalizeMessage } = messagesLib;
+
+  function toKitMessage(msg) {
+    const direction = msg.type === "sent" ? "out" : "in";
+    return normalizeMessage({
+      id: msg.id || msg.timestamp + "-" + String(msg.message || "").slice(0, 12),
+      direction,
+      kind: "text",
+      body: msg.message || "",
+      status: direction === "out" ? "delivered" : "read",
+      createdAt: msg.createdAt || new Date().toISOString(),
+    });
+  }
+
+  const ChatView = (props, { useState, useStyle, html, css, useScope }) => {
     const data = props.props || props;
     const {
       conversation,
       messages = [],
       onBack,
       onAvatarClick,
+      onSend,
     } = data;
 
-    const [draft, setDraft] = useState("");
-
+    useScope({ MessageBubble, Composer, IconButton, Avatar });
     useStyle(css`
       ${appVariables}
       ${avatarStyles}
@@ -33,7 +67,8 @@ BP.module(
         flex: 1;
         height: 100%;
         min-height: 0;
-        background: var(--app-bg);
+        background: var(--app-bg, var(--dimui-color-bg, #0f172a));
+        color: var(--app-text, var(--dimui-color-text, #e2e8f0));
       }
 
       .chat-header {
@@ -41,19 +76,9 @@ BP.module(
         align-items: center;
         gap: 0.75rem;
         padding: 0.75rem 1rem;
-        background: var(--app-surface);
-        border-bottom: 1px solid var(--app-border);
+        background: var(--app-surface, var(--dimui-color-surface-2, #0b1220));
+        border-bottom: 1px solid var(--app-border, var(--dimui-color-border, #334155));
         flex-shrink: 0;
-      }
-
-      .back-btn {
-        background: none;
-        border: none;
-        font-size: 1.25rem;
-        cursor: pointer;
-        padding: 0.25rem;
-        color: var(--app-text);
-        line-height: 1;
       }
 
       .header-info {
@@ -68,118 +93,12 @@ BP.module(
 
       .header-status {
         font-size: 0.75rem;
-        color: var(--app-text-secondary);
+        color: var(--app-text-secondary, var(--dimui-color-text-muted, #94a3b8));
       }
 
       .header-actions {
         display: flex;
-        gap: 0.25rem;
-      }
-
-      .icon-btn {
-        background: none;
-        border: none;
-        font-size: 1.125rem;
-        cursor: pointer;
-        padding: 0.375rem;
-        border-radius: 50%;
-      }
-
-      .icon-btn:hover {
-        background: var(--app-surface-hover);
-      }
-
-      .messages {
-        flex: 1;
-        min-height: 0;
-        overflow-y: auto;
-        padding: 1rem;
-        display: flex;
-        /* Newest at flex-start (visual bottom) so the last message + shared
-           timestamp are on-screen for FLIP without waiting on scroll. */
-        flex-direction: column-reverse;
-        gap: 0.75rem;
-        -webkit-overflow-scrolling: touch;
-      }
-
-      .message-row {
-        display: flex;
-        gap: 0.5rem;
-        max-width: 85%;
-      }
-
-      .message-row.sent {
-        align-self: flex-end;
-        flex-direction: row-reverse;
-      }
-
-      .message-row.received {
-        align-self: flex-start;
-      }
-
-      .bubble {
-        padding: 0.625rem 0.875rem;
-        border-radius: 16px;
-        font-size: 0.875rem;
-        line-height: 1.4;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
-      }
-
-      .message-row.sent .bubble {
-        background: var(--app-sent);
-        color: white;
-        border-bottom-right-radius: 4px;
-      }
-
-      .message-row.received .bubble {
-        background: var(--app-received);
-        color: var(--app-text);
-        border-bottom-left-radius: 4px;
-      }
-
-      .msg-meta {
-        display: block;
-        font-size: 0.6875rem;
-        color: var(--app-text-secondary);
-        margin-top: 0.25rem;
-      }
-
-      .message-row.sent .msg-meta {
-        text-align: right;
-      }
-
-      .input-bar {
-        display: flex;
-        gap: 0.5rem;
-        padding: 0.75rem 1rem;
-        padding-bottom: max(0.75rem, env(safe-area-inset-bottom, 0px));
-        background: var(--app-surface);
-        border-top: 1px solid var(--app-border);
-        flex-shrink: 0;
-        margin-top: auto;
-      }
-
-      .msg-input {
-        flex: 1;
-        padding: 0.625rem 0.875rem;
-        border: 1px solid var(--app-border);
-        border-radius: 24px;
-        font-size: 0.875rem;
-        outline: none;
-        background: var(--app-bg);
-        color: var(--app-text);
-      }
-
-      .send-btn {
-        background: var(--app-primary);
-        color: white;
-        border: none;
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
-        cursor: pointer;
-        font-size: 1rem;
-        flex-shrink: 0;
+        gap: 0.15rem;
       }
 
       .header-avatar-btn {
@@ -188,6 +107,17 @@ BP.module(
         padding: 0;
         cursor: pointer;
       }
+
+      .messages {
+        flex: 1;
+        min-height: 0;
+        overflow-y: auto;
+        padding: 0.75rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.15rem;
+        -webkit-overflow-scrolling: touch;
+      }
     `);
 
     if (!conversation) {
@@ -195,47 +125,43 @@ BP.module(
     }
 
     const keys = sharedKeys(conversation.id);
-    const lastMessage = messages.length > 0 ? messages[messages.length - 1] : null;
-
     const headerStatus = conversation.isOnline
       ? "Online"
       : conversation.isGroup
         ? `${conversation.members || 0} members`
         : "Offline";
 
-    const renderHeaderAvatar = () => {
-      if (conversation.avatarEmoji) {
-        return html`
-          <div class="avatar avatar-sm emoji-avatar" data-vt-shared="${keys.avatar}">
-            ${conversation.avatarEmoji}
-          </div>
-        `;
-      }
-      return html`
-        <img
-          class="avatar avatar-sm"
-          src="${conversation.avatar}"
-          alt="${conversation.name}"
-          data-vt-shared="${keys.avatar}"
-      />
-      `;
-    };
+    const initials = String(conversation.name || "?")
+      .split(/\s+/)
+      .map((p) => p[0] || "")
+      .join("")
+      .slice(0, 2)
+      .toUpperCase() || "?";
+
+    const kitMessages = messages.map(toKitMessage).filter(Boolean);
 
     return html`
       <div class="chat-view">
         <header class="chat-header">
-          <button class="back-btn" @click="${() => onBack?.()}" aria-label="Back">
-            ←
-          </button>
+          <dimui-icon-button
+            .props="${{
+              name: "arrowLeft",
+              label: "Back",
+              onClick: () => onBack && onBack(),
+            }}"
+          />
           <button
             class="header-avatar-btn"
-            @click="${() => onAvatarClick?.(conversation.id)}"
+            @click="${() => onAvatarClick && onAvatarClick(conversation.id)}"
           >
-            <div class="avatar-wrap">
-              ${renderHeaderAvatar()}
-              ${conversation.isOnline
-                ? html`<span class="online-dot" data-vt-shared="${keys.online}"></span>`
-                : ""}
+            <div class="avatar-wrap" data-vt-shared="${keys.avatar}">
+              <dimui-avatar
+                .props="${{
+                  label: initials,
+                  size: "sm",
+                  online: Boolean(conversation.isOnline),
+                }}"
+              />
             </div>
           </button>
           <div class="header-info">
@@ -243,58 +169,31 @@ BP.module(
             <div class="header-status" data-vt-shared="${keys.status}">${headerStatus}</div>
           </div>
           <div class="header-actions">
-            <button class="icon-btn" title="Video call">📹</button>
-            <button class="icon-btn" title="Voice call">📞</button>
-            <button class="icon-btn" title="More">⋮</button>
+            <dimui-icon-button
+              .props="${{ name: "video", label: "Video call" }}"
+            />
+            <dimui-icon-button
+              .props="${{ name: "call", label: "Voice call" }}"
+            />
           </div>
         </header>
 
         <div class="messages">
-          ${[...messages].reverse().map((msg, index) => {
-            // With column-reverse, index 0 is the chronologically last message
-            // and sits at the visible bottom for shared-element FLIP.
-            const isLast = index === 0;
-            return html`
-              <div class="message-row ${msg.type}">
-                ${msg.type === "received"
-                  ? html`
-                      <img
-                        class="avatar avatar-sm"
-                        src="${msg.avatar}"
-                        alt="${msg.username}"
-                    />
-                    `
-                  : ""}
-                <div>
-                  ${isLast
-                    ? html`
-                        <div class="bubble" data-vt-shared="${keys.lastMessage}">
-                          ${msg.message}
-                        </div>
-                        <span class="msg-meta" data-vt-shared="${keys.timestamp}"
-                          >${msg.timestamp}</span
-                        >
-                      `
-                    : html`
-                        <div class="bubble">${msg.message}</div>
-                        <span class="msg-meta">${msg.timestamp}</span>
-                      `}
-                </div>
-              </div>
-            `;
-          })}
+          ${kitMessages.map((msg) => html`
+            <dimui-message-bubble .props="${{ message: msg }}" />
+          `)}
         </div>
 
-        <div class="input-bar">
-          <input
-            class="msg-input"
-            type="text"
-            placeholder="Type a message..."
-            .value="${draft}"
-            @input="${(e) => setDraft(e.target.value)}"
+        <dimui-composer
+          .props="${{
+            enabled: true,
+            onSend: (text) => {
+              if (typeof onSend === "function") onSend(text);
+            },
+            onAttach: () => {},
+            onTyping: () => {},
+          }}"
         />
-          <button class="send-btn" title="Send">➤</button>
-        </div>
       </div>
     `;
   };

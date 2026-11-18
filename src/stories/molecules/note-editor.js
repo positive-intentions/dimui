@@ -1,6 +1,6 @@
 BP.module(
   "dimui/stories/molecules/note-editor",
-  ["dimui/demos/notes/note-editor","dimui/stories/fixtures"],
+  ["dimui/components/notes/organisms/note-editor","dimui/stories/fixtures"],
   function (__dep0, __dep1) {
   const { html, define, useState, useScope } = Dim;
   const { NoteEditor } = __dep0;

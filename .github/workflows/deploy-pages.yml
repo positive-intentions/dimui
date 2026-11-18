@@ -25,7 +25,7 @@ jobs:
       - name: Prepare Pages artifact
         run: |
           mkdir -p _site
-          cp index.html preview.html app.js preview.js runtime.js _site/
+          cp index.html preview.html runTests.html app.js preview.js runtime.js _site/
           cp -r src _site/src
           cp _site/index.html _site/404.html
           touch _site/.nojekyll

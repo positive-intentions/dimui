@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>dimui — DimTest</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        min-height: 100%;
+        background: #e2e8f0;
+        color: #0f172a;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="dim-test-root" hidden></div>
+
+    <script>
+      (function () {
+        var STORAGE_KEY = "dimui-impl";
+        var CDN_DIM_LIB = "https://positive-intentions.github.io/dim/lib/";
+        var impl = "js";
+        var dimLib = CDN_DIM_LIB;
+        try {
+          var params = new URLSearchParams(location.search || "");
+          var q = params.get("impl") || "";
+          q = String(q).toLowerCase();
+          if (q === "js" || q === "wasm") {
+            impl = q;
+            try {
+              localStorage.setItem(STORAGE_KEY, impl);
+            } catch (e) {}
+          } else {
+            var stored = (localStorage.getItem(STORAGE_KEY) || "").toLowerCase();
+            if (stored === "js" || stored === "wasm") impl = stored;
+          }
+          var dl = params.get("dimLib") || "";
+          if (dl) {
+            dimLib = dl.charAt(dl.length - 1) === "/" ? dl : dl + "/";
+          }
+        } catch (e) {}
+        document.documentElement.dataset.dimRuntime = impl;
+
+        var VAULT_FLAG = "dimui-vault";
+        var LIVE_DB = "DimDatabase";
+        var testRunId =
+          Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 8);
+        var testDbSeq = 0;
+        var originalIdbOpen = indexedDB.open.bind(indexedDB);
+        globalThis.__DIM_ORIG_IDB_OPEN__ = originalIdbOpen;
+        indexedDB.open = function (name, version) {
+          var next = name;
+          if (name === LIVE_DB) {
+            next = LIVE_DB + "_test_" + testRunId + "_" + testDbSeq;
+          }
+          return originalIdbOpen(next, version);
+        };
+
+        function snapshotVaultFlag() {
+          try {
+            return {
+              has: localStorage.getItem(VAULT_FLAG) !== null,
+              value: localStorage.getItem(VAULT_FLAG),
+            };
+          } catch (e) {
+            return { has: false, value: null };
+          }
+        }
+
+        function restoreVaultFlag(snap) {
+          try {
+            if (!snap || !snap.has) {
+              localStorage.removeItem(VAULT_FLAG);
+            } else {
+              localStorage.setItem(VAULT_FLAG, snap.value);
+            }
+          } catch (e) {}
+        }
+
+        function sleep(ms) {
+          return new Promise(function (resolve) {
+            setTimeout(resolve, ms);
+          });
+        }
+
+        function withVaultIsolation(runFn) {
+          var snap = snapshotVaultFlag();
+          return Promise.resolve()
+            .then(function () {
+              return runFn();
+            })
+            .then(
+              function (result) {
+                restoreVaultFlag(snap);
+                return result;
+              },
+              function (err) {
+                restoreVaultFlag(snap);
+                throw err;
+              },
+            );
+        }
+
+        function installTestIsolation() {
+          var origTest = DimTest.test;
+          DimTest.test = function (name, fn) {
+            return origTest(name, function () {
+              testDbSeq += 1;
+              var self = this;
+              var args = arguments;
+              function drain(result, isError) {
+                return sleep(600)
+                  .then(function () {
+                    if (DimTest.clearFixture) DimTest.clearFixture();
+                    return sleep(300);
+                  })
+                  .then(function () {
+                    if (isError) throw result;
+                    return result;
+                  });
+              }
+              return Promise.resolve()
+                .then(function () {
+                  return fn.apply(self, args);
+                })
+                .then(
+                  function (result) {
+                    return drain(result, false);
+                  },
+                  function (err) {
+                    return drain(err, true);
+                  },
+                );
+            });
+          };
+
+          var origRun = DimTest.run.bind(DimTest);
+          DimTest.run = function () {
+            return withVaultIsolation(origRun);
+          };
+
+          var origRerun = DimTest.rerun.bind(DimTest);
+          DimTest.rerun = function () {
+            testRunId =
+              Date.now().toString(36) +
+              "_" +
+              Math.random().toString(36).slice(2, 8);
+            testDbSeq = 0;
+            return withVaultIsolation(origRerun);
+          };
+        }
+
+        var dimSrc =
+          impl === "wasm"
+            ? dimLib + "dim.wasm.global.js"
+            : dimLib + "dim.global.js";
+
+        // Sources under src/ that ship with dimui and are instrumented.
+        // Local BP modules load via classic scripts; deps resolve via runtime.js.
+        // theme.js is loaded uninstrumented (storage/subscribe helpers are
+        // explorer chrome; kit tests only need themeTokens / applyDocumentTheme).
+        var preloadScripts = ["./src/theme.js"];
+
+        var libraryScripts = [
+          "./src/components/atoms/button.js",
+          "./src/components/atoms/icon.js",
+          "./src/components/atoms/icon-button.js",
+          "./src/components/atoms/chip.js",
+          "./src/components/atoms/text-field.js",
+          "./src/components/atoms/empty-state.js",
+          "./src/components/atoms/fab.js",
+          "./src/components/atoms/avatar.js",
+          "./src/components/molecules/search-field.js",
+          "./src/components/molecules/confirm-dialog.js",
+          "./src/components/molecules/overflow-menu.js",
+          "./src/components/molecules/unlock-screen.js",
+          "./src/lib/notes/vault.js",
+          "./src/lib/notes/tokens.js",
+          "./src/lib/notes/mockData.js",
+          "./src/lib/notes/sharedKeys.js",
+          "./src/lib/notes/note-filters.js",
+          "./src/components/notes/molecules/folder-item.js",
+          "./src/components/notes/molecules/mobile-folder-bar.js",
+          "./src/components/notes/molecules/notes-header.js",
+          "./src/components/notes/molecules/note-item.js",
+          "./src/components/notes/organisms/folder-rail.js",
+          "./src/components/notes/organisms/note-list.js",
+          "./src/components/notes/organisms/note-editor.js",
+          "./src/components/notes/organisms/navigation-view.js",
+          "./src/components/notes/templates/notes-layout.js",
+          "./src/components/notes/organisms/notes-shell.js",
+          "./src/lib/messaging/tokens.js",
+          "./src/lib/messaging/messages.js",
+          "./src/components/messaging/molecules/message-bubble.js",
+          "./src/components/messaging/molecules/composer.js",
+          "./src/components/messaging/molecules/chat-header.js",
+          "./src/components/messaging/molecules/incoming-call-banner.js",
+          "./src/components/messaging/organisms/chat-thread.js",
+        ];
+
+        var testScripts = [
+          "./src/components/molecules/confirm-dialog.test.js",
+          "./src/components/molecules/overflow-menu.test.js",
+          "./src/components/molecules/unlock-screen.test.js",
+          "./src/lib/notes/vault.test.js",
+          "./src/lib/notes/sharedKeys.test.js",
+          "./src/lib/notes/note-filters.test.js",
+          "./src/lib/notes/mockData.test.js",
+          "./src/components/notes/molecules/folder-item.test.js",
+          "./src/components/notes/molecules/mobile-folder-bar.test.js",
+          "./src/components/notes/molecules/notes-header.test.js",
+          "./src/components/notes/molecules/note-item.test.js",
+          "./src/components/notes/organisms/folder-rail.test.js",
+          "./src/components/notes/organisms/note-list.test.js",
+          "./src/components/notes/organisms/note-editor.test.js",
+          "./src/components/notes/organisms/navigation-view.test.js",
+          "./src/components/notes/templates/notes-layout.test.js",
+          "./src/components/notes/organisms/notes-shell.test.js",
+          "./src/lib/messaging/messages.test.js",
+          "./src/components/messaging/molecules/message-bubble.test.js",
+          "./src/components/messaging/molecules/composer.test.js",
+          "./src/components/messaging/molecules/chat-header.test.js",
+          "./src/components/messaging/molecules/incoming-call-banner.test.js",
+          "./src/components/messaging/organisms/chat-thread.test.js",
+        ];
+
+        function loadScript(src) {
+          return new Promise(function (resolve, reject) {
+            var s = document.createElement("script");
+            s.src = src;
+            s.async = false;
+            s.onload = function () {
+              resolve();
+            };
+            s.onerror = function () {
+              reject(new Error("Failed to load " + src));
+            };
+            document.head.appendChild(s);
+          });
+        }
+
+        function loadScriptChain(urls, index) {
+          if (index >= urls.length) return Promise.resolve();
+          return loadScript(urls[index]).then(function () {
+            return loadScriptChain(urls, index + 1);
+          });
+        }
+
+        function coverPathFromSrc(src) {
+          return String(src).replace(/^\.\//, "");
+        }
+
+        function injectInstrumented(source, file) {
+          return new Promise(function (resolve, reject) {
+            var s = document.createElement("script");
+            s.text =
+              source +
+              "\n//# sourceURL=" +
+              file.replace(/[^\w./-]/g, "_");
+            try {
+              document.head.appendChild(s);
+              resolve();
+            } catch (err) {
+              reject(err);
+            }
+          });
+        }
+
+        function loadInstrumented(index) {
+          if (index >= libraryScripts.length) return Promise.resolve();
+          var src = libraryScripts[index];
+          var file = coverPathFromSrc(src);
+          DimTest.splash(
+            "Instrumenting " +
+              (index + 1) +
+              "/" +
+              libraryScripts.length +
+              "…",
+          );
+          return fetch(src)
+            .then(function (res) {
+              if (!res.ok) {
+                throw new Error(
+                  "Failed to fetch " + src + " (" + res.status + ")",
+                );
+              }
+              return res.text();
+            })
+            .then(function (text) {
+              var instrumented = DimTest.instrument(text, file);
+              return injectInstrumented(instrumented, file);
+            })
+            .then(function () {
+              return loadInstrumented(index + 1);
+            });
+        }
+
+        function boot() {
+          return loadScript(dimLib + "dim.test.global.js")
+            .then(function () {
+              if (!globalThis.DimTest) {
+                throw new Error("DimTest global missing");
+              }
+              installTestIsolation();
+              DimTest.splash("Loading Dim (" + impl + ")…");
+              return loadScriptChain(
+                [dimSrc, "./runtime.js", dimLib + "dim.cover.global.js"],
+                0,
+              );
+            })
+            .then(function () {
+              if (!globalThis.Dim) {
+                throw new Error("Dim global missing — check CDN / ?impl=");
+              }
+              if (!globalThis.DimTest.instrument) {
+                throw new Error(
+                  "DimTest.instrument missing — need dim.cover.global.js",
+                );
+              }
+              if (!globalThis.BP) {
+                throw new Error("BP runtime missing");
+              }
+              DimTest.splash("Loading theme…");
+              return loadScriptChain(preloadScripts, 0);
+            })
+            .then(function () {
+              DimTest.splash("Instrumenting library…");
+              return loadInstrumented(0);
+            })
+            .then(function () {
+              DimTest.splash("Loading tests…");
+              return loadScriptChain(testScripts, 0);
+            })
+            .then(function () {
+              DimTest.splash("Running tests…");
+              return DimTest.run();
+            });
+        }
+
+        boot().catch(function (err) {
+          if (globalThis.DimTest && DimTest.splash) {
+            DimTest.splash(String(err && err.message ? err.message : err));
+          }
+          globalThis.__DIM_TEST__ = {
+            done: true,
+            passed: 0,
+            failed: 1,
+            results: [
+              {
+                name: "boot",
+                ok: false,
+                error: String(err && err.stack ? err.stack : err),
+              },
+            ],
+          };
+          console.error(err);
+        });
+      })();
+    </script>
+  </body>
+</html>

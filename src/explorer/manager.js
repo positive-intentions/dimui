@@ -1,6 +1,6 @@
 BP.module(
   "dimui/explorer/manager",
-  ["dimui/theme","dimui/registry","dimui/router","dimui/explorer/shortcuts","dimui/components/atoms/icon-button","dimui/components/molecules/sidebar","dimui/components/molecules/preview-frame","dimui/components/molecules/addon-panel","dimui/components/molecules/drawer","dimui/components/molecules/tabs"],
+  ["dimui/theme","dimui/registry","dimui/router","dimui/explorer/shortcuts","dimui/components/atoms/icon-button","dimui/explorer/sidebar","dimui/explorer/preview-frame","dimui/explorer/addon-panel","dimui/components/molecules/drawer","dimui/components/molecules/tabs"],
   function (__dep0, __dep1, __dep2, __dep3, __dep4, __dep5, __dep6, __dep7, __dep8, __dep9) {
   const { define, html, css, useState, useEffect, useRef, useStyle, useScope } = Dim;
   const { themeTokens, STORAGE_KEYS, MOBILE_BREAKPOINT, readStorage, writeStorage, readJsonStorage, writeJsonStorage, applyDocumentTheme, THEME_MESSAGE } = __dep0;

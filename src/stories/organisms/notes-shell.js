@@ -1,6 +1,6 @@
 BP.module(
   "dimui/stories/organisms/notes-shell",
-  ["dimui/demos/notes/notes-shell","dimui/theme"],
+  ["dimui/components/notes/organisms/notes-shell","dimui/theme"],
   function (__dep0, __dep1) {
   const { html } = Dim;
   const { NotesShell } = __dep0;
