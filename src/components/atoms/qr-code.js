@@ -21,13 +21,15 @@ BP.module(
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        background: var(--dimui-color-surface, #fff);
+        /* Always white — QR modules must stay high-contrast for scanning. */
+        background: #ffffff;
         border-radius: var(--dimui-radius-md, 8px);
         padding: 0.5rem;
         box-sizing: border-box;
       }
       .wrap.empty {
         color: var(--dimui-color-text-muted, #94a3b8);
+        background: var(--dimui-color-surface, #1e293b);
         font-size: 0.85rem;
         line-height: 1.3;
         padding: 1rem;
@@ -53,8 +55,10 @@ BP.module(
         width: 100%;
         height: 100%;
       }
+      /* Hardcoded dark fill — theme text is light in dark mode and would
+         wash out on the white QR card (especially fullscreen). */
       .mod {
-        fill: var(--dimui-color-text, #0f172a);
+        fill: #0f172a;
       }
       .fs {
         position: fixed;
@@ -86,7 +90,8 @@ BP.module(
         max-height: min(90vw, 90vh);
         overflow: hidden;
         border-radius: var(--dimui-radius-lg, 12px);
-        background: #fff;
+        background: #ffffff;
+        color: #0f172a;
         padding: 1.5rem;
         box-sizing: border-box;
         line-height: 0;
@@ -94,6 +99,9 @@ BP.module(
       .fs-card svg {
         width: 100%;
         height: 100%;
+      }
+      .fs-card .mod {
+        fill: #0f172a;
       }
     `;
 
@@ -145,7 +153,7 @@ BP.module(
           px +
           '" height="' +
           px +
-          '" role="img"><path class="mod" d="' +
+          '" role="img"><path class="mod" fill="#0f172a" d="' +
           d +
           '"/></svg>',
       };
