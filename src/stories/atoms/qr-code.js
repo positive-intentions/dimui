@@ -17,9 +17,14 @@ BP.module(
         html`<dimui-story-pad
           .props="${{
             layout: "row",
-            content: html`<dimui-qr-code
-              .props="${{ value: 'wu1:hello-dimui', size: 192, level: 'M' }}"
-            />`,
+            content: html`<div>
+              <p style="margin:0 0 0.5rem;font-size:0.85rem;opacity:0.75">
+                Tap the QR to enlarge
+              </p>
+              <dimui-qr-code
+                .props="${{ value: 'wu1:hello-dimui', size: 192, level: 'M' }}"
+              />
+            </div>`,
           }}"
         />`,
     };
