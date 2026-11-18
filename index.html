@@ -6,7 +6,7 @@
     <title>dimui — Component explorer</title>
     <!--
       Sync-load Dim from the GitHub Pages CDN (classic IIFE → window.Dim)
-      before runtime.js installs the data: import-map shim for ESM.
+      before runtime.js installs BP and classic dimui scripts load.
     -->
     <script>
       (function () {
@@ -62,6 +62,98 @@
   </head>
   <body>
     <dimui-manager></dimui-manager>
-    <script type="module" src="./app.js"></script>
+
+    <!-- classic dimui modules (dependency order) -->
+    <script src="./src/theme.js"></script>
+    <script src="./src/router.js"></script>
+    <script src="./src/components/atoms/avatar.js"></script>
+    <script src="./src/components/atoms/badge.js"></script>
+    <script src="./src/components/atoms/button.js"></script>
+    <script src="./src/components/atoms/chip.js"></script>
+    <script src="./src/components/atoms/divider.js"></script>
+    <script src="./src/components/atoms/empty-state.js"></script>
+    <script src="./src/components/atoms/fab.js"></script>
+    <script src="./src/components/atoms/icon-button.js"></script>
+    <script src="./src/components/atoms/icon.js"></script>
+    <script src="./src/components/atoms/kbd.js"></script>
+    <script src="./src/components/atoms/overlay.js"></script>
+    <script src="./src/components/atoms/qty-stepper.js"></script>
+    <script src="./src/components/atoms/text-area.js"></script>
+    <script src="./src/components/atoms/text-field.js"></script>
+    <script src="./src/components/molecules/addon-panel.js"></script>
+    <script src="./src/components/molecules/app-shell.js"></script>
+    <script src="./src/components/molecules/drawer.js"></script>
+    <script src="./src/components/molecules/preview-frame.js"></script>
+    <script src="./src/components/molecules/search-field.js"></script>
+    <script src="./src/components/molecules/sidebar.js"></script>
+    <script src="./src/components/molecules/tabs.js"></script>
+    <script src="./src/components/molecules/toolbar.js"></script>
+    <script src="./src/components/molecules/tree.js"></script>
+    <script src="./src/components/molecules/view-header.js"></script>
+    <script src="./src/demos/notes/styles.js"></script>
+    <script src="./src/demos/notes/mockData.js"></script>
+    <script src="./src/demos/notes/sharedKeys.js"></script>
+    <script src="./src/demos/notes/NavigationView.js"></script>
+    <script src="./src/demos/notes/app.js"></script>
+    <script src="./src/demos/notes/note-editor.js"></script>
+    <script src="./src/demos/notes/note-item.js"></script>
+    <script src="./src/demos/notes/note-list.js"></script>
+    <script src="./src/demos/notes/notes-shell.js"></script>
+    <script src="./src/demos/notes/unlock-screen.js"></script>
+    <script src="./src/demos/messaging/sharedStyles.js"></script>
+    <script src="./src/demos/messaging/mockData.js"></script>
+    <script src="./src/demos/messaging/sharedKeys.js"></script>
+    <script src="./src/demos/messaging/CallsListView.js"></script>
+    <script src="./src/demos/messaging/ChatView.js"></script>
+    <script src="./src/demos/messaging/ContactDetailsView.js"></script>
+    <script src="./src/demos/messaging/ContactsDrawer.js"></script>
+    <script src="./src/demos/messaging/ConversationListView.js"></script>
+    <script src="./src/demos/messaging/NavigationView.js"></script>
+    <script src="./src/demos/messaging/ProfileView.js"></script>
+    <script src="./src/demos/messaging/app.js"></script>
+    <script src="./src/demos/shopping/sharedStyles.js"></script>
+    <script src="./src/demos/shopping/mockData.js"></script>
+    <script src="./src/demos/shopping/sharedKeys.js"></script>
+    <script src="./src/demos/shopping/CartItem.js"></script>
+    <script src="./src/demos/shopping/CartSummary.js"></script>
+    <script src="./src/demos/shopping/CartView.js"></script>
+    <script src="./src/demos/shopping/CatalogView.js"></script>
+    <script src="./src/demos/shopping/CheckoutView.js"></script>
+    <script src="./src/demos/shopping/NavigationView.js"></script>
+    <script src="./src/demos/shopping/OrderConfirmationView.js"></script>
+    <script src="./src/demos/shopping/OrdersView.js"></script>
+    <script src="./src/demos/shopping/ProductCard.js"></script>
+    <script src="./src/demos/shopping/ProductDetailView.js"></script>
+    <script src="./src/demos/shopping/ProfileView.js"></script>
+    <script src="./src/demos/shopping/app.js"></script>
+    <script src="./src/stories/pad.js"></script>
+    <script src="./src/stories/fixtures.js"></script>
+    <script src="./src/stories/atoms/avatar.js"></script>
+    <script src="./src/stories/atoms/button.js"></script>
+    <script src="./src/stories/atoms/chip.js"></script>
+    <script src="./src/stories/atoms/empty-state.js"></script>
+    <script src="./src/stories/atoms/fab.js"></script>
+    <script src="./src/stories/atoms/qty-stepper.js"></script>
+    <script src="./src/stories/atoms/text-area.js"></script>
+    <script src="./src/stories/atoms/text-field.js"></script>
+    <script src="./src/stories/benchmark.js"></script>
+    <script src="./src/stories/messaging.js"></script>
+    <script src="./src/stories/molecules/app-shell.js"></script>
+    <script src="./src/stories/molecules/note-editor.js"></script>
+    <script src="./src/stories/molecules/note-item.js"></script>
+    <script src="./src/stories/molecules/note-list.js"></script>
+    <script src="./src/stories/molecules/product-card.js"></script>
+    <script src="./src/stories/molecules/unlock-screen.js"></script>
+    <script src="./src/stories/molecules/view-header.js"></script>
+    <script src="./src/stories/notes.js"></script>
+    <script src="./src/stories/organisms/notes-shell.js"></script>
+    <script src="./src/stories/shopping.js"></script>
+    <script src="./src/stories/welcome.js"></script>
+    <script src="./src/registry.js"></script>
+    <script src="./src/explorer/shortcuts.js"></script>
+    <script src="./src/explorer/preview-root.js"></script>
+    <script src="./src/explorer/manager.js"></script>
+
+    <script src="./app.js"></script>
   </body>
 </html>

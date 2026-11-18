@@ -1,7 +1,14 @@
-import { html } from "@positive-intentions/dim";
-import "../demos/shopping/app.js";
+BP.module(
+  "dimui/stories/shopping",
+  ["dimui/demos/shopping/app"],
+  function (__side0) {
+  void __side0;
+  const { html } = Dim;
 
-export default {
-  title: "Demos/Shopping app",
-  render: () => html`<dimui-shopping-app />`,
-};
+  const __default = {
+    title: "Demos/Shopping app",
+    render: () => html`<dimui-shopping-app />`,
+  };
+  return { default: __default };
+  },
+);

@@ -1,32 +1,36 @@
-import { html, define, useState, useScope } from "@positive-intentions/dim";
-import { QtyStepper } from "../../components/atoms/qty-stepper.js";
-import { StoryPad } from "../pad.js";
+BP.module(
+  "dimui/stories/atoms/qty-stepper",
+  ["dimui/components/atoms/qty-stepper","dimui/stories/pad"],
+  function (__dep0, __dep1) {
+  const { html, define, useState, useScope } = Dim;
+  const { QtyStepper } = __dep0;
+  const { StoryPad } = __dep1;
+  void QtyStepper;
+  void StoryPad;
 
-void QtyStepper;
-void StoryPad;
+  const QtyDemo = define({
+    tag: "dimui-story-qty-demo",
+    component: (_, { html: tpl, useState: state, useScope: scope }) => {
+      scope({ QtyStepper, StoryPad });
+      const [value, setValue] = state(2);
+      return tpl`
+        <dimui-story-pad
+          .props="${{
+            layout: "row",
+            content: tpl`<dimui-qty-stepper .props="${{ value, onChange: setValue }}" />`,
+          }}"
+        />
+      `;
+    },
+  });
+  const __default = {
+    title: "Atoms/QtyStepper",
+  };
+  const Default = {
+    render: () => html`<dimui-story-qty-demo />`,
+  };
 
-const QtyDemo = define({
-  tag: "dimui-story-qty-demo",
-  component: (_, { html: tpl, useState: state, useScope: scope }) => {
-    scope({ QtyStepper, StoryPad });
-    const [value, setValue] = state(2);
-    return tpl`
-      <dimui-story-pad
-        .props="${{
-          layout: "row",
-          content: tpl`<dimui-qty-stepper .props="${{ value, onChange: setValue }}" />`,
-        }}"
-      />
-    `;
+  void QtyDemo;
+  return { Default, default: __default };
   },
-});
-
-export default {
-  title: "Atoms/QtyStepper",
-};
-
-export const Default = {
-  render: () => html`<dimui-story-qty-demo />`,
-};
-
-void QtyDemo;
+);
