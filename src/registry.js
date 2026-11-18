@@ -1,7 +1,7 @@
 BP.module(
   "dimui/registry",
-  ["dimui/stories/welcome","dimui/stories/atoms/button","dimui/stories/atoms/text-field","dimui/stories/atoms/text-area","dimui/stories/atoms/avatar","dimui/stories/atoms/chip","dimui/stories/atoms/fab","dimui/stories/atoms/empty-state","dimui/stories/atoms/qty-stepper","dimui/stories/molecules/unlock-screen","dimui/stories/molecules/note-item","dimui/stories/molecules/note-list","dimui/stories/molecules/note-editor","dimui/stories/molecules/view-header","dimui/stories/molecules/app-shell","dimui/stories/molecules/product-card","dimui/stories/organisms/notes-shell","dimui/stories/notes","dimui/stories/messaging","dimui/stories/shopping","dimui/stories/benchmark"],
-  function (__dep0, __dep1, __dep2, __dep3, __dep4, __dep5, __dep6, __dep7, __dep8, __dep9, __dep10, __dep11, __dep12, __dep13, __dep14, __dep15, __dep16, __dep17, __dep18, __dep19, __dep20) {
+  ["dimui/stories/welcome","dimui/stories/atoms/button","dimui/stories/atoms/text-field","dimui/stories/atoms/text-area","dimui/stories/atoms/avatar","dimui/stories/atoms/chip","dimui/stories/atoms/fab","dimui/stories/atoms/empty-state","dimui/stories/atoms/qty-stepper","dimui/stories/atoms/qr-code","dimui/stories/molecules/unlock-screen","dimui/stories/molecules/note-item","dimui/stories/molecules/note-list","dimui/stories/molecules/note-editor","dimui/stories/molecules/view-header","dimui/stories/molecules/app-shell","dimui/stories/molecules/product-card","dimui/stories/molecules/qr-scanner","dimui/stories/organisms/notes-shell","dimui/stories/notes","dimui/stories/messaging","dimui/stories/shopping","dimui/stories/benchmark"],
+  function (__dep0, __dep1, __dep2, __dep3, __dep4, __dep5, __dep6, __dep7, __dep8, __dep9, __dep10, __dep11, __dep12, __dep13, __dep14, __dep15, __dep16, __dep17, __dep18, __dep19, __dep20, __dep21, __dep22) {
   const welcomeStory = __dep0;
   const buttonStories = __dep1;
   const textFieldStories = __dep2;
@@ -11,18 +11,20 @@ BP.module(
   const fabStories = __dep6;
   const emptyStateStories = __dep7;
   const qtyStepperStories = __dep8;
-  const unlockStories = __dep9;
-  const noteItemStories = __dep10;
-  const noteListStories = __dep11;
-  const noteEditorStories = __dep12;
-  const viewHeaderStories = __dep13;
-  const appShellStories = __dep14;
-  const productCardStories = __dep15;
-  const notesShellStories = __dep16;
-  const notesStory = __dep17;
-  const messagingStory = __dep18;
-  const shoppingStory = __dep19;
-  const benchmarkStory = __dep20;
+  const qrCodeStories = __dep9;
+  const unlockStories = __dep10;
+  const noteItemStories = __dep11;
+  const noteListStories = __dep12;
+  const noteEditorStories = __dep13;
+  const viewHeaderStories = __dep14;
+  const appShellStories = __dep15;
+  const productCardStories = __dep16;
+  const qrScannerStories = __dep17;
+  const notesShellStories = __dep18;
+  const notesStory = __dep19;
+  const messagingStory = __dep20;
+  const shoppingStory = __dep21;
+  const benchmarkStory = __dep22;
   const modules = [
     welcomeStory,
     buttonStories,
@@ -33,6 +35,7 @@ BP.module(
     fabStories,
     emptyStateStories,
     qtyStepperStories,
+    qrCodeStories,
     unlockStories,
     noteItemStories,
     noteListStories,
@@ -40,6 +43,7 @@ BP.module(
     viewHeaderStories,
     appShellStories,
     productCardStories,
+    qrScannerStories,
     notesShellStories,
     notesStory,
     messagingStory,
