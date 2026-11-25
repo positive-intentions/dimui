@@ -15,14 +15,29 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Checkout dimurl (hash router)
+        uses: actions/checkout@v4
+        with:
+          repository: positive-intentions/dimurl
+          path: _dimurl
+          # Fall back to default branch if staging is missing.
+          ref: staging
+          # Don't fail the whole job if dimurl is unreachable — Pages CDN is used then.
+        continue-on-error: true
+
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
 
-      - name: Start static server
+      - name: Start static servers
         run: |
           python3 -m http.server 4173 --bind 127.0.0.1 &
           echo $! > /tmp/dim-http.pid
+          if [ -d _dimurl/src ]; then
+            (cd _dimurl && python3 -m http.server 5180 --bind 127.0.0.1) &
+            echo $! > /tmp/dimurl-http.pid
+            echo "DIMURL_SRC=http://127.0.0.1:5180/src/" >> "$GITHUB_ENV"
+          fi
           for i in $(seq 1 30); do
             if curl -sf -o /dev/null http://127.0.0.1:4173/runTests.html; then
               exit 0
@@ -45,10 +60,14 @@ jobs:
         env:
           BASE_URL: http://127.0.0.1:4173
           NODE_PATH: ${{ runner.temp }}/node_modules
+          DIMURL_SRC: ${{ env.DIMURL_SRC }}
 
-      - name: Stop static server
+      - name: Stop static servers
         if: always()
         run: |
           if [ -f /tmp/dim-http.pid ]; then
             kill "$(cat /tmp/dim-http.pid)" || true
+          fi
+          if [ -f /tmp/dimurl-http.pid ]; then
+            kill "$(cat /tmp/dimurl-http.pid)" || true
           fi

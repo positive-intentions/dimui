@@ -15,7 +15,7 @@
 
 <div align="center">
 
-[**Live**](https://positive-intentions.github.io/dimui/) | [**dim**](https://github.com/positive-intentions/dim) | [**dim-boilerplate**](https://github.com/positive-intentions/dim-boilerplate) | [**dimim**](https://github.com/positive-intentions/dimim)
+[**Live**](https://positive-intentions.github.io/dimui/) | [**dim**](https://github.com/positive-intentions/dim) | [**dimurl**](https://github.com/positive-intentions/dimurl) | [**dim-boilerplate**](https://github.com/positive-intentions/dim-boilerplate) | [**dimim**](https://github.com/positive-intentions/dimim)
 
 </div>
 
@@ -172,6 +172,9 @@ Useful flags: `?impl=js|wasm`, `?dimLib=…`.
 | `panel` | `?panel=false` / `?panel=right` | Hide panel or dock right |
 | `full` | `?full=true` | Fullscreen canvas |
 | `impl` | `?impl=wasm` | Dim runtime: `js` (default) or `wasm` |
+| `dimurlSrc` | `?dimurlSrc=http://127.0.0.1:5180/src/` | Local dimurl while developing |
+
+Notes shell declares hash paths with [dimurl](https://github.com/positive-intentions/dimurl) `<dimurl-router>` / `<dimurl-route>` and drives selection via `useParams` / `useNavigate` (`#/note/:id`, `#/folder/:id`).
 
 ## Layout
 

@@ -7,9 +7,25 @@
  *
  * Modules register as BP.module("dimui/…", deps, factory). Missing dimui/*
  * ids are loaded by injecting <script src="./src/….js"> then resolving.
+ *
+ * Remote dimurl/* modules load from the dimurl CDN (or ?dimurlSrc= override)
+ * the same way apps load dimui from Pages.
  */
 (function () {
   var SRC_ROOT = "./src/";
+  var CDN_DIMURL_SRC = "https://positive-intentions.github.io/dimurl/src/";
+  var DIMURL_SRC = CDN_DIMURL_SRC;
+
+  try {
+    var params = new URLSearchParams(location.search || "");
+    var dimurlSrcQ = params.get("dimurlSrc") || "";
+    if (dimurlSrcQ) {
+      DIMURL_SRC =
+        dimurlSrcQ.charAt(dimurlSrcQ.length - 1) === "/"
+          ? dimurlSrcQ
+          : dimurlSrcQ + "/";
+    }
+  } catch (e) {}
 
   if (!globalThis.Dim) {
     throw new Error(
@@ -22,6 +38,7 @@
   globalThis.__DIMUI__ = {
     impl: document.documentElement.dataset.dimRuntime || "js",
     srcRoot: SRC_ROOT,
+    dimurlSrc: DIMURL_SRC,
   };
 
   var registry = Object.create(null);
@@ -29,13 +46,19 @@
   var loading = Object.create(null);
 
   function scriptUrlFor(name) {
-    // "dimui/theme" → ./src/theme.js
-    // "dimui/components/atoms/button" → ./src/components/atoms/button.js
-    var path = name.slice("dimui/".length);
-    if (!path) {
-      return null;
+    if (name.indexOf("dimui/") === 0) {
+      // "dimui/theme" → ./src/theme.js
+      // "dimui/components/atoms/button" → ./src/components/atoms/button.js
+      var path = name.slice("dimui/".length);
+      if (!path) return null;
+      return SRC_ROOT + path + ".js";
     }
-    return SRC_ROOT + path + ".js";
+    if (name.indexOf("dimurl/") === 0) {
+      var urlPath = name.slice("dimurl/".length);
+      if (!urlPath) return null;
+      return DIMURL_SRC + urlPath + ".js";
+    }
+    return null;
   }
 
   function loadScript(url) {
@@ -58,14 +81,11 @@
 
   function ensureRegistered(name) {
     if (registry[name]) return Promise.resolve();
-    if (name.indexOf("dimui/") !== 0) {
+    var url = scriptUrlFor(name);
+    if (!url) {
       return Promise.reject(
         new Error('BP module "' + name + '" is not registered'),
       );
-    }
-    var url = scriptUrlFor(name);
-    if (!url) {
-      return Promise.reject(new Error('Invalid dimui module id "' + name + '"'));
     }
     return loadScript(url).then(function () {
       if (!registry[name]) {

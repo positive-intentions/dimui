@@ -6,8 +6,22 @@ BP.module(
     "dimui/lib/notes/mockData",
     "dimui/lib/notes/note-filters",
     "dimui/components/notes/templates/notes-layout",
+    "dimurl/notes",
+    "dimurl/components/router",
+    "dimurl/components/route",
+    "dimurl/hooks/use-params",
   ],
-  function (tokens, vault, mock, filters, layout) {
+  function (
+    tokens,
+    vault,
+    mock,
+    filters,
+    layout,
+    notesUrl,
+    routerMod,
+    routeMod,
+    paramsMod,
+  ) {
     const { define, css } = Dim;
     const { notesTokens } = tokens;
     const { VAULT_FLAG, VAULT_SENTINEL } = vault;
@@ -20,6 +34,9 @@ BP.module(
     } = mock;
     const { computeViewId, filterNotes, folderLabelFor } = filters;
     const { NotesLayout } = layout;
+    const { Router } = routerMod;
+    const { Route } = routeMod;
+    const { useParams, useNavigate, useLocation } = paramsMod;
 
     const shellStyles = css`
       ${notesTokens}
@@ -54,7 +71,7 @@ BP.module(
         },
       ) => {
         style(shellStyles);
-        scope({ NotesLayout });
+        scope({ NotesLayout, Router, Route });
 
         const password = props.password || "";
         const create = Boolean(props.create);
@@ -89,18 +106,99 @@ BP.module(
         const [confirmEmpty, setConfirmEmpty] = state(false);
         const [newFolderOpen, setNewFolderOpen] = state(false);
         const [newFolderName, setNewFolderName] = state("");
+        // Skip writing URL while applying an inbound hash (avoid push loops).
+        const applyingUrlRef = ref(false);
+        const listRef = ref([]);
         const hostRef = ref();
+
+        const urlParams = useParams({
+          useState: state,
+          useEffect: effect,
+          useRef: ref,
+        });
+        const navigate = useNavigate({ useRef: ref });
+        const loc = useLocation({
+          useState: state,
+          useEffect: effect,
+          useRef: ref,
+        });
 
         const rawNotes = Array.isArray(notes) ? notes : [];
         const rawFolders = Array.isArray(folders) ? folders : [];
         const list = rawNotes.map(normalizeNote).filter(Boolean);
         const folderList = rawFolders.map(normalizeFolder).filter(Boolean);
+        listRef.current = list;
 
         // Don't block vault unlock on foldersLoading — a new key can lag behind
         // vault/notes on first open of an upgraded store shape.
         void foldersLoading;
         const loading = vaultLoading || notesLoading;
         const isSaving = Boolean(vaultSaving || notesSaving || foldersSaving);
+
+        const writeUrl = (folder, noteId, mode) => {
+          // Always write on user/UI actions. applyFromParams uses navigate()
+          // directly and sets applyingUrlRef so inbound apply does not loop
+          // through writeUrl — blocking here dropped rail/folder navigations
+          // when an apply was in flight (hash stayed on the previous folder).
+          const path = notesUrl.toLocation({
+            folderFilter: folder,
+            noteId: noteId || null,
+          });
+          if (mode === "replace") navigate(path, { replace: true });
+          else navigate(path);
+        };
+
+        const applyFromParams = (params, pathname, allNotes) => {
+          // Pathname is source of truth for the hash. Route params can lag a
+          // tick behind navigate(); preferring stale folderId was resetting
+          // the URL back to the previous folder after rail clicks.
+          const parsed = notesUrl.fromLocation(pathname || "/");
+          const folder =
+            parsed.folderFilter ||
+            params.folderId ||
+            SMART_FOLDERS.all;
+          const noteId =
+            parsed.noteId ||
+            (params.noteId != null && params.noteId !== ""
+              ? params.noteId
+              : null);
+          const pool = Array.isArray(allNotes) ? allNotes : list;
+
+          applyingUrlRef.current = true;
+          setFolderFilter(folder);
+
+          if (noteId) {
+            const found = pool.some((n) => n && n.id === noteId);
+            if (found) {
+              setSelectedId(noteId);
+              setNavStack(["list", `note:${noteId}`]);
+              applyingUrlRef.current = false;
+              return;
+            }
+            // Invalid / missing note → list for that folder.
+            setSelectedId(null);
+            setNavStack(["list"]);
+            applyingUrlRef.current = false;
+            navigate(
+              notesUrl.toLocation({ folderFilter: folder, noteId: null }),
+              { replace: true },
+            );
+            return;
+          }
+
+          setSelectedId(null);
+          setNavStack(["list"]);
+          applyingUrlRef.current = false;
+
+          // Normalize empty / alternate shapes to the canonical list hash.
+          const expected = notesUrl.toLocation({
+            folderFilter: folder,
+            noteId: null,
+          });
+          if ((pathname || "/") !== expected) {
+            navigate(expected, { replace: true });
+          }
+        };
 
         effect(() => {
           const host = hostRef.current;
@@ -158,20 +256,39 @@ BP.module(
 
         const visibleNotes = filterNotes(list, folderFilter);
 
+        // Drive navStack / selection from router params (hash → UI).
+        effect(() => {
+          if (!ready || loading) return undefined;
+          if (applyingUrlRef.current) return undefined;
+          applyFromParams(
+            {
+              folderId: urlParams.folderId,
+              noteId: urlParams.noteId,
+            },
+            loc.pathname,
+            listRef.current,
+          );
+          return undefined;
+        }, [
+          ready,
+          loading,
+          loc.pathname,
+          urlParams.folderId,
+          urlParams.noteId,
+        ]);
+
         effect(() => {
           if (!ready) return;
           const top = navStack[navStack.length - 1] || "list";
-          if (top.startsWith("note:")) {
-            const id = top.slice(5);
-            const stillThere = visibleNotes.some((n) => n.id === id);
-            if (!stillThere) {
-              setNavStack(["list"]);
-              setSelectedId(null);
-            }
-            return;
-          }
-          if (selectedId && !visibleNotes.some((n) => n.id === selectedId)) {
-            setSelectedId(null);
+          const openId = top.startsWith("note:") ? top.slice(5) : null;
+          const focusId = openId || selectedId;
+          if (!focusId) return;
+          if (visibleNotes.some((n) => n.id === focusId)) return;
+          // Note left the current filter (e.g. moved folder while open).
+          setSelectedId(null);
+          if (openId) {
+            setNavStack(["list"]);
+            writeUrl(folderFilter, null, "replace");
           }
         }, [ready, visibleNotes, navStack, selectedId]);
 
@@ -200,6 +317,7 @@ BP.module(
           persistNotes([nextNote, ...list]);
           setSelectedId(id);
           setNavStack(["list", `note:${id}`]);
+          writeUrl(folderFilter, id, "push");
         };
 
         const updateNote = (updated) => {
@@ -249,6 +367,7 @@ BP.module(
           );
           setNavStack(["list"]);
           setSelectedId(null);
+          writeUrl(folderFilter, null, "replace");
         };
 
         const restoreNote = (id) => {
@@ -269,6 +388,7 @@ BP.module(
           persistNotes(list.filter((n) => n.id !== id));
           setNavStack(["list"]);
           setSelectedId(null);
+          writeUrl(folderFilter, null, "replace");
         };
 
         const emptyTrash = () => {
@@ -276,21 +396,25 @@ BP.module(
           setConfirmEmpty(false);
           setNavStack(["list"]);
           setSelectedId(null);
+          writeUrl(folderFilter, null, "replace");
         };
 
         const selectNote = (id) => {
           setSelectedId(id);
           setNavStack(["list", `note:${id}`]);
+          writeUrl(folderFilter, id, "push");
         };
 
         const goBack = () => {
           setNavStack(["list"]);
+          writeUrl(folderFilter, null, "push");
         };
 
         const selectFolder = (id) => {
           setFolderFilter(id);
           setNavStack(["list"]);
           setSelectedId(null);
+          writeUrl(id, null, "push");
         };
 
         const createFolder = () => {
@@ -301,6 +425,7 @@ BP.module(
           setNewFolderName("");
           setNewFolderOpen(false);
           setFolderFilter(id);
+          writeUrl(id, null, "push");
         };
 
         const countFor = (filterId) => filterNotes(list, filterId).length;
@@ -335,64 +460,70 @@ BP.module(
           `;
         }
 
+        const layoutProps = {
+          theme,
+          noteOpen,
+          viewId,
+          folderRail: {
+            smartItems,
+            folders: folderList,
+            trashItem,
+            folderFilter,
+            countFor,
+            onSelectFolder: selectFolder,
+            newFolderOpen,
+            newFolderName,
+            onNewFolderOpen: setNewFolderOpen,
+            onNewFolderName: setNewFolderName,
+            onCreateFolder: createFolder,
+            onCancelNewFolder: () => setNewFolderOpen(false),
+          },
+          header: {
+            title: "Notes",
+            onLock,
+          },
+          mobileBar: {
+            items: mobileItems,
+            selectedId: folderFilter,
+            onSelect: selectFolder,
+          },
+          nav: {
+            notes: visibleNotes,
+            folders: folderList,
+            selectedId,
+            folderFilter,
+            folderLabel: label,
+            navStack,
+            saveStatus,
+            onSelect: selectNote,
+            onCreate: createNote,
+            onBack: goBack,
+            onChange: updateNote,
+            onTogglePin: togglePin,
+            onMoveFolder: moveFolder,
+            onTrash: trashNote,
+            onRestore: restoreNote,
+            onDeleteForever: deleteForever,
+            onEmptyTrash: () => setConfirmEmpty(true),
+          },
+          confirm: {
+            open: confirmEmpty,
+            title: "Empty Trash?",
+            body: "All notes in Recently Deleted will be permanently removed.",
+            confirmLabel: "Empty Trash",
+            onConfirm: emptyTrash,
+            onCancel: () => setConfirmEmpty(false),
+          },
+        };
+
         return tpl`
-          <dimui-notes-layout
-            .props="${{
-              theme,
-              noteOpen,
-              viewId,
-              folderRail: {
-                smartItems,
-                folders: folderList,
-                trashItem,
-                folderFilter,
-                countFor,
-                onSelectFolder: selectFolder,
-                newFolderOpen,
-                newFolderName,
-                onNewFolderOpen: setNewFolderOpen,
-                onNewFolderName: setNewFolderName,
-                onCreateFolder: createFolder,
-                onCancelNewFolder: () => setNewFolderOpen(false),
-              },
-              header: {
-                title: "Notes",
-                onLock,
-              },
-              mobileBar: {
-                items: mobileItems,
-                selectedId: folderFilter,
-                onSelect: selectFolder,
-              },
-              nav: {
-                notes: visibleNotes,
-                folders: folderList,
-                selectedId,
-                folderFilter,
-                folderLabel: label,
-                navStack,
-                saveStatus,
-                onSelect: selectNote,
-                onCreate: createNote,
-                onBack: goBack,
-                onChange: updateNote,
-                onTogglePin: togglePin,
-                onMoveFolder: moveFolder,
-                onTrash: trashNote,
-                onRestore: restoreNote,
-                onDeleteForever: deleteForever,
-                onEmptyTrash: () => setConfirmEmpty(true),
-              },
-              confirm: {
-                open: confirmEmpty,
-                title: "Empty Trash?",
-                body: "All notes in Recently Deleted will be permanently removed.",
-                confirmLabel: "Empty Trash",
-                onConfirm: emptyTrash,
-                onCancel: () => setConfirmEmpty(false),
-              },
-            }}"
-          />
+          <dimurl-router>
+            <dimurl-route path="/"></dimurl-route>
+            <dimurl-route path="/folder/:folderId"></dimurl-route>
+            <dimurl-route path="/note/:noteId"></dimurl-route>
+            <dimurl-route path="/folder/:folderId/note/:noteId"></dimurl-route>
+            <dimui-notes-layout .props="${layoutProps}" />
+          </dimurl-router>
         `;
       },
     });

@@ -10,6 +10,16 @@
     });
   }
 
+  function resetHash() {
+    try {
+      window.history.replaceState(
+        {},
+        "",
+        window.location.pathname + window.location.search + "#/",
+      );
+    } catch (e) {}
+  }
+
   async function waitFor(fn, label, timeoutMs) {
     var timeout = timeoutMs || 20000;
     var start = Date.now();
@@ -70,6 +80,7 @@
   }
 
   test("notes-shell create vault seeds notes and CRUD", async function () {
+    resetHash();
     var vault = await BP.require("dimui/lib/notes/vault");
     try {
       localStorage.removeItem(vault.VAULT_FLAG);
@@ -233,6 +244,7 @@
   }
 
   test("notes-shell reopen vault restore deleteForever and nav clear", async function () {
+    resetHash();
     var vault = await BP.require("dimui/lib/notes/vault");
     try {
       localStorage.removeItem(vault.VAULT_FLAG);
@@ -304,10 +316,21 @@
     item = nav.list.shadowRoot.querySelector("dimui-note-item");
     expect(item).toBeTruthy();
     item.shadowRoot.querySelector("button").click();
-    await sleep(120);
-    layout = el.shadowRoot.querySelector("dimui-notes-layout");
-    parts = layoutParts(layout);
-    nav = navParts(parts.nav);
+    await waitFor(function () {
+      layout = el.shadowRoot.querySelector("dimui-notes-layout");
+      if (!layout) return null;
+      parts = layoutParts(layout);
+      nav = navParts(parts.nav);
+      if (!nav.editor || !nav.editor.shadowRoot) return null;
+      var icons = nav.editor.shadowRoot.querySelectorAll("dimui-icon-button");
+      for (var i = 0; i < icons.length; i++) {
+        var sr =
+          icons[i].shadowRoot && icons[i].shadowRoot.querySelector("button");
+        var al = (sr && sr.getAttribute("aria-label")) || "";
+        if (/restore/i.test(al)) return icons[i];
+      }
+      return null;
+    }, "restore control on trashed note");
     expect(
       clickIconByLabel(nav.editor.shadowRoot, /restore/i),
     ).toBeTruthy();
@@ -357,6 +380,7 @@
   });
 
   test("notes-shell folders trash empty and mobile", async function () {
+    resetHash();
     var vault = await BP.require("dimui/lib/notes/vault");
     try {
       localStorage.removeItem(vault.VAULT_FLAG);
@@ -438,5 +462,78 @@
       var back = nav.editor.shadowRoot.querySelector("dimui-icon-button");
       if (back) clickHost(back);
     }
+  });
+
+  test("notes-shell syncs selection to hash and opens from hash", async function () {
+    resetHash();
+    var vault = await BP.require("dimui/lib/notes/vault");
+    var hash = await BP.require("dimurl/hash");
+    try {
+      localStorage.removeItem(vault.VAULT_FLAG);
+    } catch (e) {}
+
+    await BP.require("dimui/components/notes/organisms/notes-shell");
+    var el = await mount("dimui-notes-shell", {
+      password: "hash-pass-1",
+      create: true,
+      theme: "dark",
+      onLock: function () {},
+      onUnlockFailed: function () {},
+    });
+    var layout = await waitShellReady(el);
+    expect(hash.read().pathname).toBe("/");
+
+    var parts = layoutParts(layout);
+    var nav = navParts(parts.nav);
+    var item = nav.list.shadowRoot.querySelector("dimui-note-item");
+    expect(item).toBeTruthy();
+    item.shadowRoot.querySelector("button").click();
+    await waitFor(function () {
+      var path = hash.read().pathname;
+      return path.indexOf("/note/") === 0 ? path : null;
+    }, "hash after select note");
+    expect(hash.read().pathname).toContain("/note/");
+
+    // Folder select clears note and writes list hash
+    layout = el.shadowRoot.querySelector("dimui-notes-layout");
+    parts = layoutParts(layout);
+    var railItems = parts.rail.shadowRoot.querySelectorAll("dimui-folder-item");
+    // pinned smart folder
+    railItems[1].shadowRoot.querySelector("button").click();
+    await waitFor(function () {
+      return hash.read().pathname === "/folder/pinned" ? true : null;
+    }, "hash after folder select");
+
+    // Deep-link: set hash then fire hashchange → editor opens
+    hash.replace("/note/note-welcome");
+    window.dispatchEvent(new HashChangeEvent("hashchange"));
+    await waitFor(function () {
+      if (hash.read().pathname.indexOf("/note/note-welcome") !== 0) {
+        return null;
+      }
+      layout = el.shadowRoot.querySelector("dimui-notes-layout");
+      if (!layout) return null;
+      parts = layoutParts(layout);
+      nav = navParts(parts.nav);
+      return (
+        nav.editor &&
+        nav.editor.shadowRoot &&
+        nav.editor.shadowRoot.querySelector(".title-input")
+      );
+    }, "editor from hash");
+
+    // Unknown note id → replace back to list
+    hash.replace("/note/does-not-exist-xyz");
+    window.dispatchEvent(new HashChangeEvent("hashchange"));
+    await waitFor(function () {
+      return hash.read().pathname === "/" ? true : null;
+    }, "hash after unknown note");
+
+    // `/folder/all` normalizes to `#/` (list for smart folder "all")
+    hash.replace("/folder/all");
+    window.dispatchEvent(new HashChangeEvent("hashchange"));
+    await waitFor(function () {
+      return hash.read().pathname === "/" ? true : null;
+    }, "hash normalize folder/all");
   });
 })();

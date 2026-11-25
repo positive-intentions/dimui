@@ -30,13 +30,8 @@ BP.module("dimui/lib/notes/note-editor-logic", ["dimui/lib/notes/types"], functi
       if (action.type === "ask") {
         return { confirm: action.kind };
       }
-      if (action.type === "close") {
-        return { confirm: null };
-      }
-      if (action.type === "run") {
-        return { confirm: null };
-      }
-      return state;
+      // "close", "run", and any future no-op actions clear confirm.
+      return { confirm: null };
     },
   );
 

@@ -32,11 +32,13 @@ const { chromium } = await loadPlaywright();
 const BASE = process.env.BASE_URL || "http://127.0.0.1:4173";
 const TIMEOUT_MS = Number(process.env.DIM_TEST_TIMEOUT_MS || 180000);
 const DIM_LIB = (process.env.DIM_LIB || "").trim();
+const DIMURL_SRC = (process.env.DIMURL_SRC || "").trim();
 
 function buildUrl(impl) {
   const u = new URL(`${BASE}/runTests.html`);
   u.searchParams.set("impl", impl);
   if (DIM_LIB) u.searchParams.set("dimLib", DIM_LIB);
+  if (DIMURL_SRC) u.searchParams.set("dimurlSrc", DIMURL_SRC);
   return u.toString();
 }
 

@@ -75,6 +75,10 @@
     expect(filters.computeViewId([])).toBe(filters.LIST_VIEW_ID);
     expect(filters.computeViewId(["list"])).toBe(filters.LIST_VIEW_ID);
     expect(filters.computeViewId(["list", "note:12"])).toBe("212");
+    // Hit every digitVal branch (0–9) via a numeric note id.
+    expect(filters.computeViewId(["list", "note:0123456789"])).toBe(
+      String(200 + 123456789),
+    );
     var hashed = filters.computeViewId(["list", "note:abc"]);
     expect(Number(hashed)).toBeGreaterThan(250);
     expect(String(hashed)).toBeTruthy();
