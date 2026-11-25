@@ -32,6 +32,8 @@
 
 ---
 
+**Docs:** [dimui on positive-intentions.com](https://positive-intentions.com/docs/projects/dim/dimui) · [Dim Getting Started](https://positive-intentions.com/docs/projects/dim/getting-started) · [Unit tests](https://positive-intentions.com/docs/projects/dim/unit-tests)
+
 dimui is the **shared UI** for Dim apps: design-system atoms/molecules, a notes
 kit, and a messaging kit. The explorer (sidebar, canvas iframe, addons) is a
 custom Storybook-like shell with **no Storybook dependency**. Components
@@ -124,7 +126,7 @@ When using current Dim from the CDN:
 - Do not bind `onclick=` / `srcdoc=` / `.innerHTML=` — use `@click` and text/`unsafeHTML` instead.
 - URL attributes (`href`, `src`, …) are sanitized (`javascript:` → `about:invalid#dim`).
 
-See dim’s [MIGRATION.md](https://github.com/positive-intentions/dim/blob/staging/MIGRATION.md) and [SECURITY.md](https://github.com/positive-intentions/dim/blob/staging/SECURITY.md).
+See dim’s [MIGRATION.md](https://github.com/positive-intentions/dim/blob/HEAD/MIGRATION.md) and [SECURITY.md](https://github.com/positive-intentions/dim/blob/HEAD/SECURITY.md).
 
 ## Setup
 
@@ -141,7 +143,7 @@ Serve over HTTP (browsers need a real origin for multi-script pages and the Dim 
 python3 -m http.server 5173
 ```
 
-Or `npm start`. Open [http://localhost:5173](http://localhost:5173).
+Open [http://localhost:5173](http://localhost:5173).
 
 - Manager: `index.html` → `<dimui-manager>`
 - Canvas iframe: `preview.html` → `<dimui-preview>`
