@@ -131,6 +131,22 @@ async function runImpl(browser, impl) {
   if (summary.failed > 0) {
     throw new Error(`${impl}: ${summary.failed} test(s) failed`);
   }
+  const ver = summary.verification;
+  if (ver) {
+    console.log(
+      `[${impl}] verification proved=${ver.proved} refuted=${ver.refuted} unsupported=${ver.unsupported} missing=${ver.missing} disagreements=${ver.disagreements}`,
+    );
+    const bad =
+      (ver.refuted || 0) +
+      (ver.unsupported || 0) +
+      (ver.missing || 0) +
+      (ver.disagreements || 0);
+    if (bad > 0) {
+      throw new Error(
+        `${impl}: formal verification failed (${bad} bad obligation(s))`,
+      );
+    }
+  }
   if (impl === "js") {
     assertFullCoverage(cover, impl);
   }

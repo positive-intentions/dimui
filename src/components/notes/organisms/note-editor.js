@@ -7,15 +7,28 @@ BP.module(
     "dimui/components/molecules/confirm-dialog",
     "dimui/lib/notes/sharedKeys",
     "dimui/lib/notes/mockData",
+    "dimui/lib/notes/types",
+    "dimui/lib/notes/note-editor-logic",
   ],
-  function (button, iconButton, emptyState, confirmDialog, shared, mock) {
-    const { define, css } = Dim;
+  function (
+    button,
+    iconButton,
+    emptyState,
+    confirmDialog,
+    shared,
+    mock,
+    types,
+    logic,
+  ) {
+    const { define, css, t } = Dim;
     const { Button } = button;
     const { IconButton } = iconButton;
     const { EmptyState } = emptyState;
     const { ConfirmDialog } = confirmDialog;
     const { sharedKeys } = shared;
     const { snippetFromBody, formatRelativeTime } = mock;
+    const { Note, Folder } = types;
+    const { noteEditorReducer, noteEditorViewModel } = logic;
 
     const styles = css`
       :host {
@@ -145,6 +158,19 @@ BP.module(
 
     const NoteEditor = define({
       tag: "dimui-note-editor",
+      inputs: t.record({
+        note: t.nullable(Note),
+        folders: t.array(Folder, { max: 1000, onInvalid: "coerce", default: [] }),
+        saveStatus: t.string({ max: 64, onInvalid: "coerce", default: "" }),
+        showBack: t.bool({ onInvalid: "coerce", default: false }),
+        onChange: t.fn([Note]),
+        onBack: t.fn([]),
+        onTogglePin: t.fn([t.id()]),
+        onMoveFolder: t.fn([t.id(), t.id()]),
+        onTrash: t.fn([t.id()]),
+        onRestore: t.fn([t.id()]),
+        onDeleteForever: t.fn([t.id()]),
+      }),
       component: (
         props,
         {
@@ -158,37 +184,26 @@ BP.module(
         style(styles);
         scope({ Button, IconButton, EmptyState, ConfirmDialog });
 
-        const note = props.note || null;
-        const folders = Array.isArray(props.folders) ? props.folders : [];
-        const saveStatus = props.saveStatus || "";
+        const note = props.note;
+        const folders = props.folders;
+        const saveStatus = props.saveStatus;
         const showBack = Boolean(props.showBack);
-        const onChange =
-          typeof props.onChange === "function" ? props.onChange : () => {};
-        const onBack =
-          typeof props.onBack === "function" ? props.onBack : () => {};
-        const onTogglePin =
-          typeof props.onTogglePin === "function"
-            ? props.onTogglePin
-            : () => {};
-        const onMoveFolder =
-          typeof props.onMoveFolder === "function"
-            ? props.onMoveFolder
-            : () => {};
-        const onTrash =
-          typeof props.onTrash === "function" ? props.onTrash : () => {};
-        const onRestore =
-          typeof props.onRestore === "function" ? props.onRestore : () => {};
-        const onDeleteForever =
-          typeof props.onDeleteForever === "function"
-            ? props.onDeleteForever
-            : () => {};
+        const onChange = props.onChange;
+        const onBack = props.onBack;
+        const onTogglePin = props.onTogglePin;
+        const onMoveFolder = props.onMoveFolder;
+        const onTrash = props.onTrash;
+        const onRestore = props.onRestore;
+        const onDeleteForever = props.onDeleteForever;
 
-        const [confirm, setConfirm] = state(null);
+        const [editorState, setEditorState] = state({ confirm: null });
         // Keep kind on a ref so a stale nested .props onConfirm (WASM) still
         // dispatches the correct trash/delete action.
         const confirmRef = ref(null);
+        const confirm = editorState.confirm;
 
-        if (!note) {
+        const vm = noteEditorViewModel({ note, confirm });
+        if (vm.empty) {
           return tpl`
             <section class="editor empty">
               <dimui-empty-state
@@ -211,32 +226,28 @@ BP.module(
 
         const askConfirm = (kind) => {
           confirmRef.current = kind;
-          setConfirm(kind);
+          setEditorState(
+            noteEditorReducer(editorState, { type: "ask", kind }),
+          );
         };
         const closeConfirm = () => {
           confirmRef.current = null;
-          setConfirm(null);
+          setEditorState(noteEditorReducer(editorState, { type: "close" }));
         };
 
         const runConfirm = () => {
           const kind = confirmRef.current || confirm;
           if (kind === "trash") onTrash(note.id);
           if (kind === "delete") onDeleteForever(note.id);
-          closeConfirm();
+          setEditorState(noteEditorReducer(editorState, { type: "run" }));
+          confirmRef.current = null;
         };
 
-        const confirmCopy =
-          confirm === "delete"
-            ? {
-                title: "Delete forever?",
-                body: "This note will be permanently removed from this vault.",
-                action: "Delete Forever",
-              }
-            : {
-                title: "Move to Recently Deleted?",
-                body: "You can restore it later from the trash.",
-                action: "Move to Trash",
-              };
+        const confirmCopy = {
+          title: vm.confirmTitle,
+          body: vm.confirmBody,
+          action: vm.confirmAction,
+        };
 
         return tpl`
           <section class="editor">

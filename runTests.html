@@ -180,7 +180,9 @@
           "./src/lib/notes/tokens.js",
           "./src/lib/notes/mockData.js",
           "./src/lib/notes/sharedKeys.js",
+          "./src/lib/notes/types.js",
           "./src/lib/notes/note-filters.js",
+          "./src/lib/notes/note-editor-logic.js",
           "./src/components/notes/molecules/folder-item.js",
           "./src/components/notes/molecules/mobile-folder-bar.js",
           "./src/components/notes/molecules/notes-header.js",
@@ -252,6 +254,70 @@
           return String(src).replace(/^\.\//, "");
         }
 
+        var isFileProtocol =
+          typeof location !== "undefined" && location.protocol === "file:";
+        var coverSkippedNotified = false;
+
+        function absoluteUrl(src) {
+          try {
+            return new URL(src, location.href).href;
+          } catch (e) {
+            return src;
+          }
+        }
+
+        /** Try to read source text (HTTP / some file:// browsers). */
+        function readText(src) {
+          var url = absoluteUrl(src);
+          return fetch(url)
+            .then(function (res) {
+              if (!res.ok) {
+                throw new Error(
+                  "Failed to fetch " + src + " (" + res.status + ")",
+                );
+              }
+              return res.text();
+            })
+            .catch(function (fetchErr) {
+              return new Promise(function (resolve, reject) {
+                try {
+                  var xhr = new XMLHttpRequest();
+                  xhr.open("GET", url, true);
+                  xhr.onload = function () {
+                    if (
+                      xhr.status === 0 ||
+                      (xhr.status >= 200 && xhr.status < 300)
+                    ) {
+                      resolve(xhr.responseText);
+                    } else {
+                      reject(fetchErr);
+                    }
+                  };
+                  xhr.onerror = function () {
+                    reject(fetchErr);
+                  };
+                  xhr.send();
+                } catch (e) {
+                  reject(fetchErr);
+                }
+              });
+            });
+        }
+
+        function maybeVerifyAdd(text, file) {
+          if (
+            text &&
+            globalThis.DimTest &&
+            DimTest.verify &&
+            DimTest.verify.add &&
+            /notes\/(types|note-filters|note-editor-logic)|notes\/molecules\/note-item|molecules\/confirm-dialog|notes\/organisms\/note-editor/.test(
+              file,
+            )
+          ) {
+            DimTest.verify.add(text, file);
+          }
+        }
+
         function injectInstrumented(source, file) {
           return new Promise(function (resolve, reject) {
             var s = document.createElement("script");
@@ -268,6 +334,34 @@
           });
         }
 
+        /**
+         * Load a library source for execution (+ coverage/verify when text is readable).
+         * On file:// Chrome, fetch/XHR often fail: fall back to <script src> and
+         * soft-skip instrumentation so boot still succeeds.
+         */
+        function loadLibrarySource(src, file) {
+          return readText(src)
+            .then(function (text) {
+              maybeVerifyAdd(text, file);
+              var instrumented = DimTest.instrument(text, file);
+              return injectInstrumented(instrumented, file);
+            })
+            .catch(function () {
+              if (!isFileProtocol) {
+                return Promise.reject(
+                  new Error("Failed to fetch " + src + " (and XHR fallback)"),
+                );
+              }
+              if (!coverSkippedNotified && DimTest.splash) {
+                coverSkippedNotified = true;
+                DimTest.splash(
+                  "Coverage skipped on file:// (Chrome cannot read local sources); loading via script src…",
+                );
+              }
+              return loadScript(src);
+            });
+        }
+
         function loadInstrumented(index) {
           if (index >= libraryScripts.length) return Promise.resolve();
           var src = libraryScripts[index];
@@ -279,22 +373,9 @@
               libraryScripts.length +
               "…",
           );
-          return fetch(src)
-            .then(function (res) {
-              if (!res.ok) {
-                throw new Error(
-                  "Failed to fetch " + src + " (" + res.status + ")",
-                );
-              }
-              return res.text();
-            })
-            .then(function (text) {
-              var instrumented = DimTest.instrument(text, file);
-              return injectInstrumented(instrumented, file);
-            })
-            .then(function () {
-              return loadInstrumented(index + 1);
-            });
+          return loadLibrarySource(src, file).then(function () {
+            return loadInstrumented(index + 1);
+          });
         }
 
         function boot() {
@@ -306,7 +387,12 @@
               installTestIsolation();
               DimTest.splash("Loading Dim (" + impl + ")…");
               return loadScriptChain(
-                [dimSrc, "./runtime.js", dimLib + "dim.cover.global.js"],
+                [
+                  dimSrc,
+                  "./runtime.js",
+                  dimLib + "dim.cover.global.js",
+                  dimLib + "dim.verify.global.js",
+                ],
                 0,
               );
             })
@@ -317,6 +403,11 @@
               if (!globalThis.DimTest.instrument) {
                 throw new Error(
                   "DimTest.instrument missing — need dim.cover.global.js",
+                );
+              }
+              if (!globalThis.DimTest.verify) {
+                throw new Error(
+                  "DimTest.verify missing — need dim.verify.global.js on the Dim CDN / ?dimLib=",
                 );
               }
               if (!globalThis.BP) {

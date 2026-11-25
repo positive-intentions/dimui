@@ -63,6 +63,26 @@ BP.module(
 
     const ConfirmDialog = define({
       tag: "dimui-confirm-dialog",
+      inputs: Dim.t.record({
+        open: Dim.t.bool({ onInvalid: "coerce", default: false }),
+        title: Dim.t.string({
+          max: 200,
+          onInvalid: "coerce",
+          default: "Confirm",
+        }),
+        body: Dim.t.string({ max: 2000, onInvalid: "coerce", default: "" }),
+        confirmLabel: Dim.t.string({
+          max: 64,
+          onInvalid: "coerce",
+          default: "Confirm",
+        }),
+        confirmVariant: Dim.t.enum(
+          ["danger", "contained", "outlined", "text"],
+          { onInvalid: "coerce", default: "danger" },
+        ),
+        onConfirm: Dim.t.fn([]),
+        onCancel: Dim.t.fn([]),
+      }),
       component: (props, { html: tpl, useStyle: style, useScope: scope }) => {
         style(styles);
         scope({ Button });
@@ -72,10 +92,8 @@ BP.module(
         const body = props.body || "";
         const confirmLabel = props.confirmLabel || "Confirm";
         const confirmVariant = props.confirmVariant || "danger";
-        const onConfirm =
-          typeof props.onConfirm === "function" ? props.onConfirm : () => {};
-        const onCancel =
-          typeof props.onCancel === "function" ? props.onCancel : () => {};
+        const onConfirm = props.onConfirm;
+        const onCancel = props.onCancel;
 
         return tpl`
           <div class="confirm-dialog" ?hidden="${!open}">

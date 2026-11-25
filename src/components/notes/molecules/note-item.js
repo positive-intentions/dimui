@@ -4,12 +4,14 @@ BP.module(
     "dimui/components/atoms/icon",
     "dimui/lib/notes/sharedKeys",
     "dimui/lib/notes/mockData",
+    "dimui/lib/notes/types",
   ],
-  function (icon, shared, mock) {
-    const { define, css } = Dim;
+  function (icon, shared, mock, types) {
+    const { define, css, t } = Dim;
     const { Icon } = icon;
     const { sharedKeys } = shared;
     const { snippetFromBody, formatRelativeTime } = mock;
+    const { Note } = types;
 
     const styles = css`
       :host {
@@ -96,17 +98,22 @@ BP.module(
 
     const NoteItem = define({
       tag: "dimui-note-item",
+      inputs: t.record({
+        note: Note,
+        selected: t.bool({ onInvalid: "coerce", default: false }),
+        shareTransition: t.bool({ onInvalid: "coerce", default: false }),
+        onSelect: t.fn([t.id()]),
+      }),
       component: (props, { html: tpl, useStyle: style, useScope: scope }) => {
         style(styles);
         scope({ Icon });
 
-        const note = props.note || {};
+        const note = props.note;
         const selected = Boolean(props.selected);
         const shareTransition = Boolean(props.shareTransition);
-        const onSelect =
-          typeof props.onSelect === "function" ? props.onSelect : () => {};
+        const onSelect = props.onSelect;
 
-        const id = note.id || "unknown";
+        const id = note.id;
         const keys = sharedKeys(id);
         const title = (note.title || "").trim() || "Untitled";
         const snippet = snippetFromBody(note.body);
