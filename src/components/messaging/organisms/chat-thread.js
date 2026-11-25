@@ -92,6 +92,8 @@ BP.module(
           typeof props.onVideo === "function" ? props.onVideo : () => {};
         const onLock =
           typeof props.onLock === "function" ? props.onLock : () => {};
+        const onPeerClick =
+          typeof props.onPeerClick === "function" ? props.onPeerClick : null;
         const onCancelFile =
           typeof props.onCancelFile === "function"
             ? props.onCancelFile
@@ -116,6 +118,7 @@ BP.module(
                 onVoice,
                 onVideo,
                 onLock,
+                onPeerClick,
                 menuItems,
               }}"
             />

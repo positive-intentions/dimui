@@ -26,6 +26,36 @@ BP.module(
         border-bottom: 1px solid var(--dimui-color-border, #334155);
       }
 
+      .peer {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+        flex: 1;
+        min-width: 0;
+        margin: 0;
+        padding: 0;
+        border: none;
+        background: transparent;
+        color: inherit;
+        font: inherit;
+        text-align: left;
+        cursor: default;
+      }
+
+      .peer.clickable {
+        cursor: pointer;
+        border-radius: 8px;
+      }
+
+      .peer.clickable:hover {
+        background: var(--dimui-color-surface-hover, #334155);
+      }
+
+      .peer.clickable:focus-visible {
+        outline: 2px solid var(--dimui-color-focus, #029cfd);
+        outline-offset: 2px;
+      }
+
       .info {
         flex: 1;
         min-width: 0;
@@ -80,21 +110,40 @@ BP.module(
           typeof props.onVideo === "function" ? props.onVideo : () => {};
         const onLock =
           typeof props.onLock === "function" ? props.onLock : () => {};
+        const onPeerClick =
+          typeof props.onPeerClick === "function" ? props.onPeerClick : null;
         const menuItems = Array.isArray(props.menuItems) ? props.menuItems : [];
+
+        const peerBlock = tpl`
+          <dimui-avatar
+            .props="${{
+              label: initials,
+              size: "md",
+              online,
+            }}"
+          />
+          <div class="info">
+            <div class="name">${title}</div>
+            <div class="status">${status}</div>
+          </div>
+        `;
 
         return tpl`
           <header class="header">
-            <dimui-avatar
-              .props="${{
-                label: initials,
-                size: "md",
-                online,
-              }}"
-            />
-            <div class="info">
-              <div class="name">${title}</div>
-              <div class="status">${status}</div>
-            </div>
+            ${
+              onPeerClick
+                ? tpl`
+                    <button
+                      type="button"
+                      class="peer clickable"
+                      aria-label="Contact info"
+                      @click="${onPeerClick}"
+                    >
+                      ${peerBlock}
+                    </button>
+                  `
+                : tpl`<div class="peer">${peerBlock}</div>`
+            }
             <div class="actions">
               <dimui-icon-button
                 .props="${{
